@@ -18,7 +18,8 @@
     "lint": "tsdx lint --fix",
     "prepare": "tsdx build",
     "demo": "parcel demo/index.html",
-    "test:coverage": "tsdx test --coverage"
+    "test:coverage": "tsdx test --coverage",
+    "postinstall": "npm uninstall @types/react"
   },
   "peerDependencies": {},
   "husky": {
