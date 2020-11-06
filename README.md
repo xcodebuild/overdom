@@ -46,7 +46,7 @@ const App = () => {
       <button onClick={inc}>CLICK</button>
       Hello World {count}
       <div>
-        Count more than 2:{" "}
+        Count more than 2:
         {$if(
           // cond
           () => count() > 2,
