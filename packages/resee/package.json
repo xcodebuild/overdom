@@ -1,0 +1,45 @@
+{
+  "name": "resee",
+  "version": "0.1.3",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "engines": {
+    "node": ">=10"
+  },
+  "scripts": {
+    "start": "tsdx watch",
+    "build": "tsdx build",
+    "test": "tsdx test",
+    "lint": "tsdx lint --fix",
+    "prepare": "tsdx build",
+    "demo": "parcel demo/index.html",
+    "test:coverage": "tsdx test --coverage"
+  },
+  "peerDependencies": {},
+  "husky": {
+    "hooks": {
+      "pre-commit": "tsdx lint"
+    }
+  },
+  "prettier": {
+    "printWidth": 80,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "author": "me@xcodebuild.com",
+  "module": "dist/resee.esm.js",
+  "devDependencies": {
+    "husky": "^4.3.0",
+    "parcel-bundler": "^1.12.4",
+    "tsdx": "^0.14.1",
+    "tslib": "^2.0.3",
+    "typescript": "^4.0.3"
+  },
+  "dependencies": {}
+}
