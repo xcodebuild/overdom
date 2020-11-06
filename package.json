@@ -17,7 +17,8 @@
     "test": "tsdx test",
     "lint": "tsdx lint --fix",
     "prepare": "tsdx build",
-    "demo": "parcel demo/index.html"
+    "demo": "parcel demo/index.html",
+    "test:coverage": "tsdx test --coverage"
   },
   "peerDependencies": {},
   "husky": {
@@ -34,12 +35,12 @@
   "author": "me@xcodebuild.com",
   "module": "dist/resee.esm.js",
   "devDependencies": {
+    "dumi": "^1.0.35",
     "husky": "^4.3.0",
     "parcel-bundler": "^1.12.4",
     "tsdx": "^0.14.1",
     "tslib": "^2.0.3",
     "typescript": "^4.0.3"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }

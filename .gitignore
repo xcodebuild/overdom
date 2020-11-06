@@ -6,3 +6,4 @@ dist
 dist
 build
 yarn.lock
+coverage

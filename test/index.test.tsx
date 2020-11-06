@@ -26,7 +26,7 @@ describe('Basic', () => {
       };
       return <button onClick={handleClick}>Count {count}</button>;
     };
-    render(App(), document.body);
+    render(<App />, document.body);
     await waitBatch();
     expect(document.body.innerHTML).toMatchSnapshot();
 
@@ -48,7 +48,7 @@ describe('Basic', () => {
         </div>
       );
     };
-    render(App(), document.body);
+    render(<App />, document.body);
     await waitBatch();
     expect(document.body.innerHTML).toMatchSnapshot();
 
@@ -84,7 +84,7 @@ describe('Basic', () => {
       );
     };
 
-    render(App(), document.body);
+    render(<App />, document.body);
     await waitBatch();
     expect(document.body.innerHTML).toMatchSnapshot();
 
@@ -146,7 +146,7 @@ describe('Basic', () => {
       );
     };
 
-    render(App(), document.body);
+    render(<App />, document.body);
 
     // ADD
     todoList(generateTodo([1, 2, 3, 4]));
@@ -182,7 +182,7 @@ describe('Basic', () => {
       );
     };
 
-    render(App(), document.body);
+    render(<App />, document.body);
     await waitBatch();
 
     expect(document.body.innerHTML).toMatchSnapshot();
