@@ -1,3 +1,5 @@
+![coverage](https://codecov.io/gh/xcodebuild/resee/branch/master/graphs/badge.svg?branch=master)
+![CI](https://github.com/xcodebuild/resee/workflows/CI/badge.svg)
 # RESEE
 ```
  _  __ __ __ __
@@ -78,3 +80,6 @@ So I want to write `JSX/TSX` without virtual-dom or too many build tools.
 ### Status
 
 RESEE is still in early stage, do not use it in production.
+
+### LICENSE
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fxcodebuild%2Fresee.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fxcodebuild%2Fresee?ref=badge_large)
