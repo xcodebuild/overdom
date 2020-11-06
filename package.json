@@ -3,7 +3,8 @@
     "test": "lerna run test",
     "test:coverage": "lerna run test:coverage",
     "bootstrap": "lerna bootstrap",
-    "build": "lerna run build"
+    "build": "lerna run build",
+    "lint": "lerna run lint"
   },
   "devDependencies": {
     "lerna": "^3.22.1"
