@@ -4,6 +4,7 @@
     "test:coverage": "lerna run test:coverage",
     "bootstrap": "lerna bootstrap",
     "build": "lerna run build",
+    "start": "lerna run start",
     "lint": "lerna run lint"
   },
   "devDependencies": {

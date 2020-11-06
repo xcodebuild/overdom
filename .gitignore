@@ -7,3 +7,4 @@ dist
 build
 yarn.lock
 coverage
+.tmp
