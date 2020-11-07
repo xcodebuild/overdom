@@ -2,6 +2,8 @@ import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import path from 'path';
 import fs from 'fs-extra-promise';
+// @ts-ignore
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 
 function findEntry() {
     const srcDir = path.join(process.cwd(), './src/');
@@ -33,7 +35,10 @@ export function getWebpackConfig() {
         resolve: {
           extensions: ['.ts', '.tsx', '.js']
         },
-        plugins: [new HtmlWebpackPlugin()],
+        plugins: [
+            new MiniCssExtractPlugin(),
+            new HtmlWebpackPlugin(),
+        ],
         devServer: {
             contentBase: path.join(__dirname, 'dist'),
             compress: true,
@@ -41,6 +46,36 @@ export function getWebpackConfig() {
         },
         module: {
           rules: [
+            {
+                test: /\.css$/i,
+                use: [
+                  MiniCssExtractPlugin.loader,
+                  require.resolve('css-loader'),
+                  {
+                    loader: require.resolve('postcss-loader'),
+                    options: {
+                      postcssOptions: {
+                        plugins: [
+                          [
+                            require.resolve('postcss-preset-env'),
+                            {
+                              // Options
+                            },
+                          ],
+                        ],
+                      },
+                    },
+                  },
+                ],
+            },
+            {
+                test: /\.less$/i,
+                use: [
+                  MiniCssExtractPlugin.loader,
+                  require.resolve('css-loader'),
+                  require.resolve('less-loader'),
+                ],
+            },
             {
                 test: /\.(j|t)sx?$/,
                 exclude: /(node_modules|bower_components)/,

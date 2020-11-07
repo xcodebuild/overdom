@@ -39,7 +39,7 @@ export function $if(
 }
 
 type ItemOfReactiveList<T> = T extends () => (infer I)[] ? I : T;
-export function $mapKeyed<T>(
+export function $map<T>(
   list: T,
   mapFunc: (
     item: ReactiveHandler<ItemOfReactiveList<T>>,
@@ -83,7 +83,7 @@ export function $mapKeyed<T>(
   ) => {
     const r = keyFunc(item, index);
     if (typeof r !== 'string' && typeof r !== 'number') {
-      console.trace('key of $mapKeyed should return string or number, but got ' + r, keyFunc.toString());
+      console.trace('key of $map should return string or number, but got ' + r, keyFunc.toString());
     }
     return r;
   }

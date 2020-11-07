@@ -1,3 +1,13 @@
 {
-    "private": "true"
+    "private": "true",
+    "devDependencies": {
+        "resee-cli": "^0.1.0"
+    },
+    "dependencies": {
+        "resee": "^0.1.0"
+    },
+    "scripts": {
+        "build": "resee build",
+        "start": "resee watch"
+    }
 }

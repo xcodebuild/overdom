@@ -1,4 +1,4 @@
-import { h, reactive, $if, $mapKeyed, render, ReactiveHandler } from "../src";
+import { h, reactive, $if, $map, render, ReactiveHandler } from "../src";
 
 let count = 0;
 const todoList = reactive([
@@ -73,7 +73,7 @@ const App = () => {
       <button onClick={addTodo}>ADD</button>
       <div>
         <ul>
-          {$mapKeyed(
+          {$map(
             todoList,
             ($item, $index) => (
               <Item text={$item.text} done={$item.done} index={$index}></Item>
