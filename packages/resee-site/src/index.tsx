@@ -1,10 +1,15 @@
 import './index.less';
 import Header from './components/header';
-import { render,  h } from 'resee';
+import Content from './components/content';
+import { render,  h, reactive } from 'resee';
 
 const App = () => {
-    return <div>
+    const mdContent = reactive('# Hello');
+    return <div className="page-container">
         <Header />
+        <div className="content-container">
+            <Content content={mdContent}/>
+        </div>
     </div>;
 }
 

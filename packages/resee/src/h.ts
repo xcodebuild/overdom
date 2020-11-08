@@ -16,6 +16,15 @@ function setAttr(node: HTMLElement, key: string, value: any) {
     // @ts-ignore
     node.value = value;
     return;
+  } else if (key === 'class') {
+    console.error('should be className, but got class');
+    return;
+  } else if (key === 'className') {
+    key = 'class';
+  } else if (key === 'dangerouslySetInnerHTML') {
+    const html = value.__html;
+    node.innerHTML = html;
+    return;
   }
   node.setAttribute(key, value);
 }
@@ -48,21 +57,19 @@ export function h(
     if (props) {
       Object.keys(props).forEach(key => {
         const value = props[key];
-        if (key === 'className') {
-          key = 'class';
-        }
         if (typeof value === 'function') {
           if (/^on[A-Z]/.test(key)) {
             tag.addEventListener(
               key.replace(/^on/, '').toLocaleLowerCase(),
               value
             );
+            return;
           } else if (isReactive(value)) {
             bindAttr(tag, key, value);
+            return;
           }
-        } else {
-          tag.setAttribute(key, value);
         }
+        setAttr(tag, key, value);
       });
     }
     if (children) {

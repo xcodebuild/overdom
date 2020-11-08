@@ -1,9 +1,13 @@
 {
     "private": "true",
+    "name": "resee-site",
+    "version": "0.0.0",
     "devDependencies": {
         "resee-cli": "^0.1.0"
     },
     "dependencies": {
+        "marked": "^1.2.3",
+        "normalize.css": "^8.0.1",
         "resee": "^0.1.0"
     },
     "scripts": {
