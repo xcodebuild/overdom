@@ -1,14 +1,37 @@
 import { schedule } from './batcher';
 import { isDirective } from './directive';
-import { isReactive, ReactiveHandler } from './reactive';
+import { isReactive, reactive, ReactiveHandler } from './reactive';
 import { Fragment } from './fragment';
 
 function buildComponent(
-  component: (props?: Record<string, any>) => Fragment,
+  comp: (props?: Record<string, any>) => Fragment,
   props: Record<string, any> = {}
 ) {
-  const fragment = component(props);
+  const fragment = comp(props);
   return fragment;
+}
+
+export type Component<P = undefined> = (props: {
+  [K in keyof P]: ReactiveHandler<P[K]>
+}) => Fragment;
+
+export function component<P extends Record<string, any>>(func: (props: {
+  [K in keyof P]: ReactiveHandler<P[K]>
+}) => Fragment) {
+
+  return (props: P) => {
+    // @ts-ignore
+    const reactiveProps: {
+      [K in keyof P]: ReactiveHandler<P[K]>
+    } = {};
+    if (props) {
+      Object.keys(props).forEach(key => {
+        // @ts-ignore
+        reactiveProps[key] = reactive(props[key]);
+      });
+    }
+    return func(reactiveProps);
+  }
 }
 
 function setAttr(node: HTMLElement, key: string, value: any) {
@@ -99,6 +122,7 @@ export function h(
     fragment.appendChild(tag);
   } else if (typeof type === 'function') {
     // component
+   
     return buildComponent(type as () => Fragment, {
       ...props,
       children: children,

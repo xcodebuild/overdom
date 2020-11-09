@@ -3,10 +3,14 @@ import webpack from 'webpack';
 import color from 'ansi-colors';
 import middleware from 'webpack-dev-middleware';
 import express from 'express';
+import { getReseeConfig } from './config';
 
 function getCompiler() {
     const webpackConfig = getWebpackConfig();
-    const compiler = webpack(webpackConfig);
+
+    const cfg = getReseeConfig();
+    const finalConfig = (cfg.getWebpackConfig && cfg.getWebpackConfig(webpackConfig)) || webpackConfig;
+    const compiler = webpack(finalConfig as webpack.Configuration);
     return compiler;
 }
 export function build() {

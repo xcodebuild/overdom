@@ -51,21 +51,6 @@ export function getWebpackConfig() {
                 use: [
                   MiniCssExtractPlugin.loader,
                   require.resolve('css-loader'),
-                  {
-                    loader: require.resolve('postcss-loader'),
-                    options: {
-                      postcssOptions: {
-                        plugins: [
-                          [
-                            require.resolve('postcss-preset-env'),
-                            {
-                              // Options
-                            },
-                          ],
-                        ],
-                      },
-                    },
-                  },
                 ],
             },
             {

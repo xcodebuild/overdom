@@ -117,6 +117,9 @@ class Reactive<T extends Object> {
 }
 
 export function reactive<T extends Object>(initalState: T) {
+  if (isReactive(initalState)) {
+    return initalState as unknown as ReactiveHandler<UnReactiveTypeOf<T>>;
+  }
   let state = initalState;
   return new Reactive(
     () => {
@@ -125,7 +128,7 @@ export function reactive<T extends Object>(initalState: T) {
     (newValue: T) => {
       state = newValue;
     }
-  ).get();
+  ).get() as unknown as ReactiveHandler<UnReactiveTypeOf<T>>;
 }
 
 export function isReactive(target: unknown) {
@@ -162,6 +165,7 @@ export function computed<T>(reactiveFn: () => T) {
   };
 
   const initalValue = compute();
+  // @ts-ignore
   state = reactive(initalValue);
   return state;
 }

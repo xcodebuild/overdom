@@ -26,4 +26,8 @@ exports[`Basic can render mutiple items 1`] = `"<div><button>CLICK</button>Count
 
 exports[`Basic can render mutiple items 2`] = `"<div><button>CLICK</button>Count 1</div>"`;
 
+exports[`Basic props should be reactive 1`] = `"<div><div>Hello test</div><div>Hello name</div></div>"`;
+
+exports[`Basic props should be reactive 2`] = `"<div><div>Hello test</div><div>Hello newName</div></div>"`;
+
 exports[`Basic should render hello world 1`] = `"<div>Hello World</div>"`;

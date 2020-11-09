@@ -1,14 +1,14 @@
 import './index.less';
 import Header from './components/header';
-import Content from './components/content';
 import { render,  h, reactive } from 'resee';
 
+import DocGetStarted from './doc/get-started.md';
+
 const App = () => {
-    const mdContent = reactive('# Hello');
     return <div className="page-container">
         <Header />
         <div className="content-container">
-            <Content content={mdContent}/>
+            <DocGetStarted/>
         </div>
     </div>;
 }

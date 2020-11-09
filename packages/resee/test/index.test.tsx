@@ -1,6 +1,7 @@
 import { render, h, reactive, $if } from '../src';
 import { schedule } from '../src/batcher';
 import { $map } from '../src/directive';
+import { component } from '../src/h';
 import '../src/polyfill/createRange';
 
 const waitBatch = () =>
@@ -174,8 +175,8 @@ describe('Basic', () => {
     const App = () => {
       const count = reactive(0);
       return (
-        <ul class={count}>
-          <button class={count} onClick={() => count(count() + 1)}>
+        <ul className={count}>
+          <button className={count} onClick={() => count(count() + 1)}>
             CLICK {count}
           </button>
         </ul>
@@ -191,5 +192,30 @@ describe('Basic', () => {
 
     await waitBatch();
     expect(document.body.innerHTML).toMatchSnapshot();
+  });
+
+  it('props should be reactive', async () => {
+    const Hello = component<{name: string}>(({ name }) => {
+      return <div>Hello {name}</div>;
+    });
+
+    const reactiveName = reactive('name');
+
+    const App = () => {
+      return <div>
+        <Hello name="test" />
+        <Hello name={reactiveName} />
+      </div>
+    };
+
+    render(<App />, document.body);
+    await waitBatch();
+
+    expect(document.body.innerHTML).toMatchSnapshot();
+
+    reactiveName('newName');
+    await waitBatch();
+    expect(document.body.innerHTML).toMatchSnapshot();
+
   });
 });
