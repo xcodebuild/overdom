@@ -1,15 +1,15 @@
 {
     "private": "true",
     "name": "resee-site",
-    "version": "0.0.0",
+    "version": "0.1.7",
     "devDependencies": {
-        "resee-cli": "^0.1.0"
+        "resee-cli": "^0.1.7"
     },
     "dependencies": {
         "classnames": "^2.2.6",
         "marked": "^1.2.3",
         "normalize.css": "^8.0.1",
-        "resee": "^0.1.0"
+        "resee": "^0.1.7"
     },
     "scripts": {
         "build": "resee build",
