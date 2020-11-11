@@ -23,11 +23,13 @@ describe('Basic', () => {
       const counter = reactive({
         count: 0,
         handleClick() {
-          counter.count ++;
-        }
+          counter.count++;
+        },
       });
-      
-      return <button onClick={counter.handleClick}>Count {counter.count}</button>;
+
+      return (
+        <button onClick={counter.handleClick}>Count {counter.count}</button>
+      );
     };
     render(<App />, document.body);
     await waitBatch();
@@ -43,8 +45,8 @@ describe('Basic', () => {
       const counter = reactive({
         count: 0,
         handleClick() {
-          counter.count ++;
-        }
+          counter.count++;
+        },
       });
       return (
         <div>
@@ -67,8 +69,8 @@ describe('Basic', () => {
       const counter = reactive({
         count: 1,
         handleClick() {
-          counter.count ++;
-        }
+          counter.count++;
+        },
       });
 
       return (
@@ -127,14 +129,14 @@ describe('Basic', () => {
 
     const todoList = reactive({
       list: generateTodo([1]),
-    })
+    });
 
     const App = () => {
       return (
         <ul>
           {$map(
             todoList.list,
-            (item) => (
+            item => (
               <li>
                 Text {item.value.text}
                 [ID {item.index}]
@@ -199,7 +201,12 @@ describe('Basic', () => {
       });
       return (
         <ul className={count.count}>
-          <button className={count.count} onClick={() => {count.count ++}}>
+          <button
+            className={count.count}
+            onClick={() => {
+              count.count++;
+            }}
+          >
             CLICK {count.count}
           </button>
         </ul>
@@ -218,7 +225,7 @@ describe('Basic', () => {
   });
 
   it('props should be reactive', async () => {
-    const Hello = ({ name }: {name: string}) => {
+    const Hello = ({ name }: { name: string }) => {
       return <div>Hello {name}</div>;
     };
 
@@ -227,10 +234,12 @@ describe('Basic', () => {
     });
 
     const App = () => {
-      return <div>
-        <Hello name="test" />
-        <Hello name={reactiveName.name} />
-      </div>
+      return (
+        <div>
+          <Hello name="test" />
+          <Hello name={reactiveName.name} />
+        </div>
+      );
     };
 
     render(<App />, document.body);
@@ -243,6 +252,5 @@ describe('Basic', () => {
     });
     await waitBatch();
     expect(document.body.innerHTML).toMatchSnapshot();
-
   });
 });

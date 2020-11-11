@@ -113,15 +113,12 @@ export class FragmentList extends Fragment {
   }
 
   move(fromIndex: number, toIndex: number) {
-    const insertBefore = this.childFragments[toIndex]
+    const insertBefore = this.childFragments[toIndex];
 
     let insertBeforeNode: Node | null = insertBefore?.getFirstNode();
 
     const target = this.childFragments[fromIndex]!;
-    target.insertBeforeToContainer(
-      this.container!,
-      insertBeforeNode,
-    );
+    target.insertBeforeToContainer(this.container!, insertBeforeNode);
 
     insert(this.childFragments, toIndex, target);
     let deleteIndex = fromIndex;

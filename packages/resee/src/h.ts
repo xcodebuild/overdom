@@ -36,10 +36,10 @@ function setAttr(node: HTMLElement, key: string, value: any) {
 
 function bindAttr(node: HTMLElement, key: string, value: Ref<any>) {
   let lastValue = value.value;
-  
+
   const isEvent = /^on[A-Z]/.test(key);
   const eventName = isEvent ? key.replace(/^on/, '').toLocaleLowerCase() : '';
-  let lastValueEventHandler = isEvent ? wrapFnHideRefMode(lastValue): () => {};
+  let lastValueEventHandler = isEvent ? wrapFnHideRefMode(lastValue) : () => {};
 
   schedule(() => {
     if (isEvent) {
@@ -78,7 +78,7 @@ export function h(
         if (typeof value === 'function' && /^on[A-Z]/.test(key)) {
           tag.addEventListener(
             key.replace(/^on/, '').toLocaleLowerCase(),
-            wrapFnHideRefMode(value),
+            wrapFnHideRefMode(value)
           );
           return;
         } else if (isRef(value)) {
@@ -98,7 +98,7 @@ export function h(
           autorun(() => {
             const newValue = reactiveVal.value;
             schedule(() => {
-                textNode.nodeValue = newValue;
+              textNode.nodeValue = newValue;
             });
           });
 
@@ -117,7 +117,7 @@ export function h(
     fragment.appendChild(tag);
   } else if (typeof type === 'function') {
     // component
-   
+
     return buildComponent(type as () => Fragment, {
       ...props,
       children: children,

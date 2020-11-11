@@ -1,28 +1,26 @@
 const RefSymbol = Symbol('ref');
 const InternalRawSymbol = Symbol('internal_raw');
 
-export function isRef<T>(r: Ref<T> | unknown): r is Ref<T>
+export function isRef<T>(r: Ref<T> | unknown): r is Ref<T>;
 export function isRef(r: any): r is Ref {
   return r && (r as Ref)[RefSymbol] === true;
 }
 
 export function unref<T>(ref: T): T extends Ref<infer V> ? V : T {
-  return isRef(ref) ? (ref.value as any) : ref
+  return isRef(ref) ? (ref.value as any) : ref;
 }
 
-
 type Key = string | symbol | number;
-
 
 let hideRefMode = false;
 
 export function wrapFnHideRefMode<T extends Function>(fn: T) {
-  return function(...args: any[]) {
+  return (function(...args: any[]) {
     hideRefMode = true;
     const r = fn(...args);
     hideRefMode = false;
     return r;
-  } as unknown as T;
+  } as unknown) as T;
 }
 
 const proxyObjMap = new WeakMap<Object, Object>();
@@ -65,14 +63,14 @@ class DepsManager {
 const depsManager = new DepsManager();
 
 export interface Ref<T = any> {
-  [RefSymbol]: boolean,
-  value: T,
-};
+  [RefSymbol]: boolean;
+  value: T;
+}
 
 interface TriggerableRef<T = any> {
-  [RefSymbol]: boolean,
-  value: T,
-  trigger: () => void,
+  [RefSymbol]: boolean;
+  value: T;
+  trigger: () => void;
 }
 
 export function raw(ref: Ref) {
@@ -89,7 +87,7 @@ export type NoTrackFn = (fn: () => void) => void;
 class AutorunRefImpl {
   [RefSymbol] = true;
   value = null;
-  
+
   constructor(private _fn: (notrackFn: NoTrackFn) => void) {
     this._run();
   }
@@ -106,12 +104,10 @@ class AutorunRefImpl {
     depsManager.endCollect();
   }
 
-
   trigger() {
     this._run();
   }
 }
-
 
 export function autorun(fn: (notrackFn: NoTrackFn) => void) {
   return new AutorunRefImpl(fn);
@@ -120,8 +116,7 @@ export function autorun(fn: (notrackFn: NoTrackFn) => void) {
 class RefImpl<T = any> {
   public [RefSymbol] = true;
 
-  constructor(private _value: T) {
-  }
+  constructor(private _value: T) {}
 
   get value() {
     depsManager.track(this);
@@ -151,7 +146,7 @@ class ComputedRefImpl<T = any> {
     this._value = this._compute();
     depsManager.endCollect();
   }
-   
+
   get value() {
     if (!this.inited) {
       this._recompute();
@@ -169,7 +164,6 @@ class ComputedRefImpl<T = any> {
 
 const ProxyRefSymbol = Symbol('proxy-ref');
 
-
 function isProxyRef(target: unknown) {
   return target && (target as ProxyRefImpl<any>)[ProxyRefSymbol] === true;
 }
@@ -184,7 +178,7 @@ export function reactive<T extends Record<string, any>>(obj: T): T {
 class ProxyRefImpl<T extends object = any> {
   public [RefSymbol] = true;
   public [ProxyRefSymbol] = true;
-  
+
   private _proxy: T;
 
   constructor(obj: T) {
@@ -196,42 +190,51 @@ class ProxyRefImpl<T extends object = any> {
     if (proxyMap.has(obj)) {
       return proxyMap.get(obj) as T;
     }
-  
+
     const refMap = new Map<Key, Ref>();
-  
+
     const proxy = new Proxy(obj, {
       get(_, key) {
         depsManager.track(that);
 
         if (Array.isArray(obj)) {
           if (key === 'length') return obj.length;
-          if (key === 'map') return function map(cb: (item: any, index: any) => any, thisArg?: any) {
-            return obj.map((_item: any, _index: any) => {
-              return cb((proxy as any)[_index], _index);
-            }, thisArg);
-          }
-  
-          if (['push', 'pop', 'shift', 'unshift', 'splice'].indexOf(key as string) !== -1) return function (...args: any[]) {
-            if (key === 'pop') {
-              const len = obj.length;
-              refMap.delete(len - 1);
-            } else if (key === 'splice') {
-              const index = args[0];
-              const count = args[1];
-              const len = obj.length;
+          if (key === 'map')
+            return function map(
+              cb: (item: any, index: any) => any,
+              thisArg?: any
+            ) {
+              return obj.map((_item: any, _index: any) => {
+                return cb((proxy as any)[_index], _index);
+              }, thisArg);
+            };
 
-              for (let i = 0; i < len; i ++) {
-                if (i >= index && i < index + count) {
-                  refMap.delete('' + i);
-                } else if (i >= index + count) {
-                  refMap.set('' + (i - count), refMap.get('' + i)!);
-                  refMap.delete('' + i);
+          if (
+            ['push', 'pop', 'shift', 'unshift', 'splice'].indexOf(
+              key as string
+            ) !== -1
+          )
+            return function(...args: any[]) {
+              if (key === 'pop') {
+                const len = obj.length;
+                refMap.delete(len - 1);
+              } else if (key === 'splice') {
+                const index = args[0];
+                const count = args[1];
+                const len = obj.length;
+
+                for (let i = 0; i < len; i++) {
+                  if (i >= index && i < index + count) {
+                    refMap.delete('' + i);
+                  } else if (i >= index + count) {
+                    refMap.set('' + (i - count), refMap.get('' + i)!);
+                    refMap.delete('' + i);
+                  }
                 }
               }
-            }
-            obj[key as any](...args);
-            depsManager.trigger(that);
-          }
+              obj[key as any](...args);
+              depsManager.trigger(that);
+            };
         }
 
         if (key === Symbol.species) {
@@ -250,17 +253,16 @@ class ProxyRefImpl<T extends object = any> {
         depsManager.trigger(that);
         getRef(key)!.value = value;
         return true;
-      }
+      },
     });
-  
-  
+
     function getRef(key: Key): Ref {
       if (refMap.has(key)) {
         return refMap.get(key)!;
       }
       const getter = Object.getOwnPropertyDescriptor(obj, key)?.get;
       const value = () => (obj as any)[key];
-  
+
       let result: Ref;
       if (getter) {
         // computed
@@ -276,12 +278,12 @@ class ProxyRefImpl<T extends object = any> {
         // ref
         result = new RefImpl(value());
       }
-  
+
       refMap.set(key, result);
-  
+
       return result;
     }
-  
+
     proxyMap.set(obj, proxy);
     proxyObjMap.set(proxy, obj);
     return proxy;
@@ -289,7 +291,7 @@ class ProxyRefImpl<T extends object = any> {
 
   get value() {
     depsManager.track(this);
-    return this._proxy
+    return this._proxy;
   }
 
   set value(newVal) {

@@ -31,67 +31,57 @@ export function $if(
         return;
       }
 
-      const newFragment = newResult ? yes(): no();
+      const newFragment = newResult ? yes() : no();
       schedule(() => {
         lastFragment.replaceWith(newFragment);
         lastFragment = newFragment;
       });
       lastResult = newResult;
     });
-    
+
     return lastFragment!;
   });
 }
-
-
 
 function createReactiveItem<T>(value: T, index: number) {
   return reactive({
     value,
     index,
-  })
+  });
 }
 
 export type ReactiveItem<T> = {
-  value: T,
-  index: number,
+  value: T;
+  index: number;
 };
 
 export function $map<T>(
   rawList: T[],
-  mapFunc: (
-    item: ReactiveItem<T>,
-  ) => Fragment,
-  keyFunc: (
-    item: ReactiveItem<T>,
-  ) => string | number
+  mapFunc: (item: ReactiveItem<T>) => Fragment,
+  keyFunc: (item: ReactiveItem<T>) => string | number
 ) {
-  const list = rawList as any as Ref;
-  const listData = list as any as T[];
+  const list = (rawList as any) as Ref;
+  const listData = (list as any) as T[];
 
   let lastReactiveItems = listData.map((item, index) => {
-    return createReactiveItem(
-      item,
-      index,
-    );
-  })
+    return createReactiveItem(item, index);
+  });
 
   const fragmentList = new FragmentList();
 
-  const mapFuncWrap = wrapFnHideRefMode((
-    item: ReactiveItem<T>,
-  ) => {
+  const mapFuncWrap = wrapFnHideRefMode((item: ReactiveItem<T>) => {
     const fragment = mapFunc(item);
     fragment.reactiveItem = item;
     return fragment;
   });
 
-  const keyFuncWrap = wrapFnHideRefMode((
-    item: ReactiveItem<T>,
-  ) => {
+  const keyFuncWrap = wrapFnHideRefMode((item: ReactiveItem<T>) => {
     const r = keyFunc(item);
     if (typeof r !== 'string' && typeof r !== 'number') {
-      console.trace('key of $map should return string or number, but got ' + r, keyFunc.toString());
+      console.trace(
+        'key of $map should return string or number, but got ' + r,
+        keyFunc.toString()
+      );
     }
     return r;
   });
@@ -109,7 +99,7 @@ export function $map<T>(
 
   let inited = false;
 
-  autorun((notrack) => {
+  autorun(notrack => {
     if (!inited) {
       // @ts-ignore
       inited = list.length;
@@ -117,7 +107,7 @@ export function $map<T>(
       return;
     }
 
-    const newList = list as unknown as any[];
+    const newList = (list as unknown) as any[];
 
     notrack(() => {
       const newKeys = newList.map((item, index) =>
@@ -134,12 +124,11 @@ export function $map<T>(
           // insert
           // can not find in old list, mean insert
           // insert to current index
-          const reactiveItem = createReactiveItem(newList[index], index)
+          const reactiveItem = createReactiveItem(newList[index], index);
 
           const fragment = mapFuncWrap(reactiveItem);
 
           fragmentList.insert(index, fragment, key);
-
         } else if (lastIndex !== index) {
           // move
 
@@ -148,14 +137,15 @@ export function $map<T>(
 
           fragmentList.move(fromIndex, toIndex);
         }
-
       });
 
       const removed = lastKeys.filter(key => newKeys.indexOf(key) === -1);
       fragmentList.removeWithKeys(removed);
 
       // apply new reactiveIndex
-      fragmentList.childFragments.forEach((child, index) => child!.reactiveItem!.index = index);
+      fragmentList.childFragments.forEach(
+        (child, index) => (child!.reactiveItem!.index = index)
+      );
     });
   });
 

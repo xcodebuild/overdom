@@ -1,8 +1,5 @@
-import {
-    h,
-    render,
-} from 'resee';
+import { h, render } from 'resee';
 
 const App = () => <div>Hello</div>;
 
-render(<App/>, document.getElementById('app')!);
+render(<App />, document.getElementById('app')!);

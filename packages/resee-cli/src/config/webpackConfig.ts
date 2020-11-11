@@ -6,84 +6,78 @@ import fs from 'fs-extra-promise';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 
 function findEntry() {
-    const srcDir = path.join(process.cwd(), './src/');
-    const files = fs.readdirSync(srcDir);
+  const srcDir = path.join(process.cwd(), './src/');
+  const files = fs.readdirSync(srcDir);
 
-    let index = '';
+  let index = '';
 
-    [
-        'index.tsx',
-        'index.ts',
-        'index.jsx',
-        'index.js',
-    ].forEach(file => {
-        if (files.indexOf(file) !== -1) {
-            index = file;
-        }
-    });
+  ['index.tsx', 'index.ts', 'index.jsx', 'index.js'].forEach(file => {
+    if (files.indexOf(file) !== -1) {
+      index = file;
+    }
+  });
 
-    return path.join(srcDir, index);
+  return path.join(srcDir, index);
 }
 export function getWebpackConfig() {
-    return {
-        mode: 'development',
-        devtool: 'inline-source-map',
-        entry: findEntry(),
-        output: {
-          filename: 'index.js'
+  return {
+    mode: 'development',
+    devtool: 'inline-source-map',
+    entry: findEntry(),
+    output: {
+      filename: 'index.js',
+    },
+    resolve: {
+      extensions: ['.ts', '.tsx', '.js'],
+    },
+    plugins: [new MiniCssExtractPlugin(), new HtmlWebpackPlugin()],
+    devServer: {
+      contentBase: path.join(__dirname, 'dist'),
+      compress: true,
+      port: 7799,
+    },
+    module: {
+      rules: [
+        {
+          test: /\.css$/i,
+          use: [MiniCssExtractPlugin.loader, require.resolve('css-loader')],
         },
-        resolve: {
-          extensions: ['.ts', '.tsx', '.js']
+        {
+          test: /\.less$/i,
+          use: [
+            MiniCssExtractPlugin.loader,
+            require.resolve('css-loader'),
+            require.resolve('less-loader'),
+          ],
         },
-        plugins: [
-            new MiniCssExtractPlugin(),
-            new HtmlWebpackPlugin(),
-        ],
-        devServer: {
-            contentBase: path.join(__dirname, 'dist'),
-            compress: true,
-            port: 7799
-        },
-        module: {
-          rules: [
-            {
-                test: /\.css$/i,
-                use: [
-                  MiniCssExtractPlugin.loader,
-                  require.resolve('css-loader'),
+        {
+          test: /\.(j|t)sx?$/,
+          exclude: /(node_modules|bower_components)/,
+          use: {
+            loader: 'babel-loader',
+            options: {
+              presets: [
+                '@babel/preset-env',
+                [
+                  '@babel/preset-react',
+                  {
+                    pragma: 'h',
+                    throwIfNamespace: false,
+                    runtime: 'classic',
+                  },
                 ],
-            },
-            {
-                test: /\.less$/i,
-                use: [
-                  MiniCssExtractPlugin.loader,
-                  require.resolve('css-loader'),
-                  require.resolve('less-loader'),
+                [
+                  '@babel/preset-typescript',
+                  {
+                    jsxPragma: 'h',
+                    onlyRemoveTypeImports: true,
+                  },
                 ],
+              ],
             },
-            {
-                test: /\.(j|t)sx?$/,
-                exclude: /(node_modules|bower_components)/,
-                use: {
-                  loader: 'babel-loader',
-                  options: {
-                    presets: [
-                        '@babel/preset-env', 
-                        ['@babel/preset-react', {
-                            'pragma': 'h',
-                            'throwIfNamespace': false,
-                            'runtime': 'classic'
-                        }], 
-                        ['@babel/preset-typescript', {
-                            jsxPragma: 'h',
-                            onlyRemoveTypeImports: true,
-                        }]
-                    ]
-                  }
-                }
-            }
-          ]
-        }
-    } as webpack.Configuration;
+          },
+        },
+      ],
+    },
+  } as webpack.Configuration;
 }
-
