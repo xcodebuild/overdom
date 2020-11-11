@@ -1,0 +1,36 @@
+@import 'normalize.css/normalize.css';
+
+@import './components/header/index.less';
+
+.page-container {
+    .sidebar {
+        z-index: 10;
+        top: 61px;
+        left: 0;
+        bottom: 0;
+        overflow-x: hidden;
+        overflow-y: auto;
+        position: fixed;
+    }
+    .content {
+        position: relative;
+        padding: 35px 0;
+        max-width: 700px;
+        margin: 0 auto;
+        padding-left: 50px;
+        margin-top: 60px;
+
+        p, ul, ol {
+            line-height: 1.6em;
+            margin: 1.2em 0 -1.2em;
+            padding-bottom: 1.2em;
+            position: relative;
+            z-index: 1;
+        }
+        
+    }
+}
+
+p {
+    word-spacing: 0.05em;
+}
