@@ -172,7 +172,7 @@ function isProxyRef(target: unknown) {
 
 const proxyMap = new WeakMap<Object, Object>();
 
-function createReactive<T extends Record<string, any>>(obj: T, allReactive = false): T {
+export function createReactive<T extends Record<string, any>>(obj: T, allReactive = false): T {
   const ref = new ProxyRefImpl(obj, allReactive);
   return ref.value;
 }
@@ -205,7 +205,7 @@ interface Component {
 
 export function reactiveComponent(component: new () => Fragment, props?: Record<string, any>) {
   const comp = createReactive(new component()) as any as Component;
-  comp.props = props || {};
+  comp.props = createReactive(props || {}, true);
   return comp;
 }
 
@@ -322,10 +322,9 @@ class ProxyRefImpl<T extends object = any> {
         const ref = getRef(key);
         if (isRef(ref)) {
           ref.value = value;
-          return true;
+        } else {
+          (that._obj as any)[key] = value;
         }
-
-        (that._obj as any)[key] = value;
         return true;
       },
     });
@@ -347,9 +346,9 @@ class ProxyRefImpl<T extends object = any> {
           result = value;
         } else if (value !== null && typeof value === 'object') {
           // reactive object
-          result = new ProxyRefImpl(createReactive(value, this._allReactive));
+          result = new ProxyRefImpl(createReactive(value, this._allReactive), true);
         } else if (value === 'function') {
-          result = new RefImpl(wrapFnHideRefMode(value));
+          result = new RefImpl(wrapFnHideRefMode(value.bind(this._proxy)));
         } else {
           // ref
           result = new RefImpl(value);
@@ -363,7 +362,11 @@ class ProxyRefImpl<T extends object = any> {
         refMap.set(key, result);
         return result;
       }
-      return (this as any)._obj[key];
+      const r = (this as any)._obj[key];
+      if (typeof r === 'function') {
+        return r.bind(this._proxy);
+      }
+      return r;
     }
 
     proxyMap.set(obj, proxy);

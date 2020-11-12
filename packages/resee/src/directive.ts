@@ -1,6 +1,6 @@
 import { schedule } from './batcher';
 import { Fragment, FragmentList } from './fragment';
-import { autorun, reactive, Ref, wrapFnHideRefMode } from './reactive';
+import { createAutorun, createReactive, Ref, wrapFnHideRefMode } from './reactive';
 
 export function directive<T extends () => Fragment>(func: T) {
   // @ts-ignore
@@ -22,7 +22,7 @@ export function $if(
     let inited = false;
     let lastFragment: Fragment;
 
-    autorun(() => {
+    createAutorun(() => {
       const newResult = cond();
       if (!inited) {
         lastResult = newResult;
@@ -44,10 +44,10 @@ export function $if(
 }
 
 function createReactiveItem<T>(value: T, index: number) {
-  return reactive({
+  return createReactive({
     value,
     index,
-  });
+  }, true);
 }
 
 export type ReactiveItem<T> = {
@@ -99,7 +99,7 @@ export function $map<T>(
 
   let inited = false;
 
-  autorun(notrack => {
+  createAutorun(notrack => {
     if (!inited) {
       // @ts-ignore
       inited = list.length;

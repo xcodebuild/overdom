@@ -1,4 +1,4 @@
-import { render, h, reactive, $if, run } from '../src';
+import { render, h, reactive, $if } from '../src';
 import { schedule } from '../src/batcher';
 import { $map } from '../src/directive';
 import '../src/polyfill/createRange';
@@ -19,18 +19,15 @@ describe('Basic', () => {
   });
 
   it('can reactive count', async () => {
-    const App = () => {
-      const counter = reactive({
-        count: 0,
-        handleClick() {
-          counter.count++;
-        },
-      });
-
-      return (
-        <button onClick={counter.handleClick}>Count {counter.count}</button>
-      );
-    };
+    class App {
+      @reactive count = 0;
+      handleClick() {
+        this.count ++;
+      }
+      render () {
+        return <button onClick={this.handleClick}>Count {this.count}</button>;
+      }
+    }
     render(<App />, document.body);
     await waitBatch();
     expect(document.body.innerHTML).toMatchSnapshot();
@@ -41,20 +38,15 @@ describe('Basic', () => {
   });
 
   it('can render mutiple items', async () => {
-    const App = () => {
-      const counter = reactive({
-        count: 0,
-        handleClick() {
-          counter.count++;
-        },
-      });
-      return (
-        <div>
-          <button onClick={counter.handleClick}>CLICK</button>
-          Count {counter.count}
-        </div>
-      );
-    };
+    class App {
+      @reactive count = 0;
+      handleClick() {
+        this.count ++;
+      }
+      render () {
+      return <div><button onClick={this.handleClick}>CLICK</button>Count {this.count}</div>;
+      }
+    }
     render(<App />, document.body);
     await waitBatch();
     expect(document.body.innerHTML).toMatchSnapshot();
@@ -65,32 +57,29 @@ describe('Basic', () => {
   });
 
   it('$if works', async () => {
-    const App = () => {
-      const counter = reactive({
-        count: 1,
-        handleClick() {
-          counter.count++;
-        },
-      });
-
-      return (
-        <div>
-          <button onClick={counter.handleClick}>Count {counter.count}</button>
+    class App {
+      @reactive count = 1;
+      handleClick() {
+        this.count++;
+      }
+      render() {
+        return <div>
+          <button onClick={this.handleClick}>Count {this.count}</button>
           <div>
             Bigger than 2
             {$if(
-              () => counter.count > 2,
+              () => this.count > 2,
               () => (
-                <span>YES {counter.count}</span>
+                <span>YES {this.count}</span>
               ),
               () => (
-                <span>NO {counter.count}</span>
+                <span>NO {this.count}</span>
               )
             )}
           </div>
-        </div>
-      );
-    };
+        </div>;
+      }
+    }
 
     render(<App />, document.body);
     await waitBatch();
@@ -115,27 +104,27 @@ describe('Basic', () => {
       done: boolean;
     }[] = [];
 
-    const generateTodo = (listKey: number[]) => {
-      return listKey.map(key => {
-        if (!todoBuffer[key]) {
-          todoBuffer[key] = {
-            text: 'new todo ' + key,
-            done: false,
-          };
-        }
-        return todoBuffer[key];
-      });
-    };
-
-    const todoList = reactive({
-      list: generateTodo([1]),
+  const generateTodo = (listKey: number[]) => {
+    return listKey.map(key => {
+      if (!todoBuffer[key]) {
+        todoBuffer[key] = {
+          text: 'new todo ' + key,
+          done: false,
+        };
+      }
+      return todoBuffer[key];
     });
+  };
 
-    const App = () => {
-      return (
-        <ul>
+    let app!: App;
+    class App {
+      @reactive list = generateTodo([1]);
+      render() {
+        return <ul>
+          <button id="getThis" onClick={() => {app = this}}>
+          </button>
           {$map(
-            todoList.list,
+            this.list,
             item => (
               <li>
                 Text {item.value.text}
@@ -153,20 +142,20 @@ describe('Basic', () => {
             }
           )}
         </ul>
-      );
-    };
+      }
+    }
 
     render(<App />, document.body);
+    await waitBatch();
+    document.getElementById('getThis')!.click();
 
     const todos = generateTodo([1, 2, 3, 4]);
 
     // ADD
     // 1 2 3 4
-    run(() => {
-      todoList.list.push(todos[1]);
-      todoList.list.push(todos[2]);
-      todoList.list.push(todos[3]);
-    });
+      app.list.push(todos[1]);
+      app.list.push(todos[2]);
+      app.list.push(todos[3]);
 
     await waitBatch();
     document.body.querySelectorAll('button').forEach(btn => btn.click());
@@ -174,9 +163,7 @@ describe('Basic', () => {
 
     // REMOVE
     // 1 2 4
-    run(() => {
-      todoList.list.splice(2, 1);
-    });
+      app.list.splice(2, 1);
 
     await waitBatch();
     document.body.querySelectorAll('button').forEach(btn => btn.click());
@@ -184,10 +171,8 @@ describe('Basic', () => {
 
     // MOVE
     // 1 4 2
-    run(() => {
-      todoList.list.splice(1, 1);
-      todoList.list.push(todos[1]);
-    });
+      app.list.splice(1, 1);
+      app.list.push(todos[1]);
 
     await waitBatch();
     document.body.querySelectorAll('button').forEach(btn => btn.click());
@@ -195,24 +180,23 @@ describe('Basic', () => {
   });
 
   it('attr can be reactive', async () => {
-    const App = () => {
-      const count = reactive({
-        count: 0,
-      });
-      return (
-        <ul className={count.count}>
-          <button
-            className={count.count}
-            onClick={() => {
-              count.count++;
-            }}
-          >
-            CLICK {count.count}
-          </button>
-        </ul>
-      );
-    };
-
+    class App {
+      @reactive count = 0;
+      render() {
+        return (
+          <ul className={this.count}>
+            <button
+              className={this.count}
+              onClick={() => {
+                this.count++;
+              }}
+            >
+              CLICK {this.count}
+            </button>
+          </ul>
+        );
+      }
+    }
     render(<App />, document.body);
     await waitBatch();
 
@@ -225,31 +209,38 @@ describe('Basic', () => {
   });
 
   it('props should be reactive', async () => {
-    const Hello = ({ name }: { name: string }) => {
-      return <div>Hello {name}</div>;
-    };
 
-    const reactiveName = reactive({
-      name: 'name',
-    });
+    class Hello {
+      @reactive props!: {
+        name: string,
+      }
+      render() {
+        return <div>Hello {this.props.name}</div>
+      }
+    }
+    
+    let app!: App;
 
-    const App = () => {
-      return (
-        <div>
-          <Hello name="test" />
-          <Hello name={reactiveName.name} />
-        </div>
-      );
-    };
+    class App {
+      @reactive name = 'name';
+      render() {
+        return (
+          <div>
+            <button id="getThis" onClick={() => {app = this}}></button>
 
+            <Hello name="test" />
+            <Hello name={this.name} />
+          </div>
+        );
+      }
+    }
     render(<App />, document.body);
     await waitBatch();
+    document.getElementById('getThis')!.click();
 
     expect(document.body.innerHTML).toMatchSnapshot();
 
-    run(() => {
-      reactiveName.name = 'newName';
-    });
+    app.name = 'newName';
     await waitBatch();
     expect(document.body.innerHTML).toMatchSnapshot();
   });

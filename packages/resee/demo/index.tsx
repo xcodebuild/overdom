@@ -1,27 +1,28 @@
 import { h, reactive, render, autorun, $map, computed } from "../src";
 
-
-class Counter {
-    @reactive count = 1;
-    @computed get double() {
-        return this.count * 2;
+class Hello {
+    @reactive props!: {
+      name: string,
     }
-    @autorun task() {
-    }
-    
-}
-
-class App {
-    @reactive counter = new Counter();
-    count = 1;
-
     render() {
-        return <div>
-            Hello {this.counter.double}
-            <button onClick={() => this.counter.count ++}>ADD</button>    
-        </div>;
+      return <div>Hello {this.props.name}</div>
     }
-}
+  }
+  
+  let app!: App;
 
-render(<App />, document.body);
+  class App {
+    @reactive name = 'name';
+    
+    render() {
+      return (
+        <div>
+          <button id="getThis" onClick={() => {app = this}}></button>
 
+          <Hello name="test" />
+          <Hello name={this.name} />
+        </div>
+      );
+    }
+  }
+  render(<App />, document.body);
