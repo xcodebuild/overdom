@@ -1,3 +1,5 @@
+import { Fragment } from './fragment';
+
 const RefSymbol = Symbol('ref');
 const InternalRawSymbol = Symbol('internal_raw');
 
@@ -109,7 +111,7 @@ class AutorunRefImpl {
   }
 }
 
-export function autorun(fn: (notrackFn: NoTrackFn) => void) {
+export function createAutorun(fn: (notrackFn: NoTrackFn) => void) {
   return new AutorunRefImpl(fn);
 }
 
@@ -170,9 +172,62 @@ function isProxyRef(target: unknown) {
 
 const proxyMap = new WeakMap<Object, Object>();
 
-export function reactive<T extends Record<string, any>>(obj: T): T {
-  const ref = new ProxyRefImpl(obj);
+function createReactive<T extends Record<string, any>>(obj: T, allReactive = false): T {
+  const ref = new ProxyRefImpl(obj, allReactive);
   return ref.value;
+}
+
+enum META_TYPE {
+  reactive,
+  computed,
+  autorun,
+};
+
+// map Object.prototype to its reactive keys
+let metasMap = new WeakMap<Object, Map<Key, META_TYPE>>();
+
+function addMeta(prototype: Object, key: Key, type: META_TYPE) {
+  if (!metasMap.has(prototype)) {
+    metasMap.set(prototype, new Map());
+  }
+  const metas = metasMap.get(prototype);
+  metas!.set(key, type);
+}
+
+function getMetaKeys(prototype: Object) {
+  return metasMap.get(prototype);
+}
+
+interface Component {
+  render(): Fragment;
+  props: Record<string, any>;
+}
+
+export function reactiveComponent(component: new () => Fragment, props?: Record<string, any>) {
+  const comp = createReactive(new component()) as any as Component;
+  comp.props = props || {};
+  return comp;
+}
+
+/**
+ * @reactive decorate
+ */
+export function reactive(prototype: Object, key: Key) {
+  addMeta(prototype, key, META_TYPE.reactive);
+}
+
+/**
+ * @computed decorate
+ */
+export function computed(prototype: Object, key: Key) {
+  addMeta(prototype, key, META_TYPE.computed);
+}
+
+/**
+ * @computed decorate
+ */
+export function autorun(prototype: Object, key: Key) {
+  addMeta(prototype, key, META_TYPE.autorun);
 }
 
 class ProxyRefImpl<T extends object = any> {
@@ -180,9 +235,23 @@ class ProxyRefImpl<T extends object = any> {
   public [ProxyRefSymbol] = true;
 
   private _proxy: T;
+  private _metaKeys?: Map<Key, META_TYPE>;
 
-  constructor(obj: T) {
-    this._proxy = this._initProxy(obj);
+  constructor(private _obj: T, private _allReactive = false) {
+    this._metaKeys = getMetaKeys(Object.getPrototypeOf(_obj));
+    this._proxy = this._initProxy(_obj);
+    this._initAutorun();
+  }
+
+  private _initAutorun() {
+    if (!this._metaKeys) {
+      return;
+    }
+    this._metaKeys.forEach((value, key) => {
+      if (value === META_TYPE.autorun) {
+        createAutorun(((this._obj as any)[key].bind(this._proxy)));
+      }
+    });
   }
 
   private _initProxy(obj: T): T {
@@ -250,38 +319,51 @@ class ProxyRefImpl<T extends object = any> {
         return getRef(key);
       },
       set(_, key, value) {
-        depsManager.trigger(that);
-        getRef(key)!.value = value;
+        const ref = getRef(key);
+        if (isRef(ref)) {
+          ref.value = value;
+          return true;
+        }
+
+        (that._obj as any)[key] = value;
         return true;
       },
     });
 
-    function getRef(key: Key): Ref {
+    const getRef = (key: Key): Ref => {
       if (refMap.has(key)) {
         return refMap.get(key)!;
       }
-      const getter = Object.getOwnPropertyDescriptor(obj, key)?.get;
-      const value = () => (obj as any)[key];
+      const prototype = Object.getPrototypeOf(this._obj);
+      if (!this._metaKeys && !this._allReactive) {
+        return (this._obj as any)[key];
+      }
+      const meta = this._metaKeys?.get(key);
+      let result!: Ref;
 
-      let result: Ref;
-      if (getter) {
-        // computed
-        result = new ComputedRefImpl(wrapFnHideRefMode(getter));
-      } else if (isRef(value())) {
-        result = value();
-      } else if (value() !== null && typeof value() === 'object') {
-        // reactive object
-        result = new ProxyRefImpl(reactive(value()));
-      } else if (value() === 'function') {
-        result = new RefImpl(wrapFnHideRefMode(value()));
-      } else {
-        // ref
-        result = new RefImpl(value());
+      if (this._allReactive || meta === META_TYPE.reactive) {
+        const value = (obj as any)[key];
+        if (isRef(value)) {
+          result = value;
+        } else if (value !== null && typeof value === 'object') {
+          // reactive object
+          result = new ProxyRefImpl(createReactive(value, this._allReactive));
+        } else if (value === 'function') {
+          result = new RefImpl(wrapFnHideRefMode(value));
+        } else {
+          // ref
+          result = new RefImpl(value);
+        }
+      } else if (meta === META_TYPE.computed) {
+        const getter = Object.getOwnPropertyDescriptor(prototype, key)!.get!;
+        result = new ComputedRefImpl(wrapFnHideRefMode(getter.bind(this._proxy)));
       }
 
-      refMap.set(key, result);
-
-      return result;
+      if (result) {
+        refMap.set(key, result);
+        return result;
+      }
+      return (this as any)._obj[key];
     }
 
     proxyMap.set(obj, proxy);

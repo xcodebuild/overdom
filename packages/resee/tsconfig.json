@@ -17,6 +17,7 @@
     "jsxFactory": "h",
     "esModuleInterop": true,
     "types" : [ "node", "jest" ],
-    "target": "ES5"
+    "target": "ES5",
+    "experimentalDecorators": true
   }
 }

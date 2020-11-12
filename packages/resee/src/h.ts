@@ -1,14 +1,14 @@
 import { schedule } from './batcher';
 import { isDirective } from './directive';
-import { autorun, isRef, Ref, wrapFnHideRefMode } from './reactive';
+import { createAutorun, isRef, reactiveComponent, Ref, wrapFnHideRefMode } from './reactive';
 import { Fragment } from './fragment';
 
 function buildComponent(
   comp: (props?: Record<string, any>) => Fragment,
   props: Record<string, any> = {}
 ) {
-  let fragment: Fragment;
-  fragment = comp(props);
+  const component = reactiveComponent(comp as any, props);
+  const fragment = component.render();
   return fragment!;
 }
 
@@ -49,7 +49,7 @@ function bindAttr(node: HTMLElement, key: string, value: Ref<any>) {
     setAttr(node, key, lastValue);
   });
 
-  autorun(() => {
+  createAutorun(() => {
     const newValue = value.value;
     schedule(() => {
       if (isEvent) {
@@ -95,7 +95,7 @@ export function h(
         } else if (isRef(child)) {
           const reactiveVal = child as Ref<any>;
           const textNode = document.createTextNode('' + reactiveVal.value);
-          autorun(() => {
+          createAutorun(() => {
             const newValue = reactiveVal.value;
             schedule(() => {
               textNode.nodeValue = newValue;

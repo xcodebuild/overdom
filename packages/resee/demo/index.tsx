@@ -1,33 +1,27 @@
-import { h, reactive, render, autorun, run, $map } from "../src";
-let count = 0;
+import { h, reactive, render, autorun, $map, computed } from "../src";
 
-export default function App() {
-  const todolist = reactive({
-      list: ['test' + count ++ ],
-  });
 
-  const addTodo = () => {
-      // use array.push/splice/shift/unshift to mutate
-      todolist.list.push('new todo' + count ++);
-  }
-
-  return <ul>
-    <button onClick={addTodo}>ADD TODO</button>
-    {$map(
-        todolist.list,  // array
-        (item) => {
-            // map
-            // item.value mean item
-            // item.index mean index
-            return <div>[{item.index}] {item.value}</div>;
-        },
-        (item) => {
-            // key map, alternative to <li key> in React
-            // must be string or number, and keep unique in list
-            return item.value;
-        }
-    )}
-  </ul>;
+class Counter {
+    @reactive count = 1;
+    @computed get double() {
+        return this.count * 2;
+    }
+    @autorun task() {
+    }
+    
 }
 
-render(<App/>, document.body);
+class App {
+    @reactive counter = new Counter();
+    count = 1;
+
+    render() {
+        return <div>
+            Hello {this.counter.double}
+            <button onClick={() => this.counter.count ++}>ADD</button>    
+        </div>;
+    }
+}
+
+render(<App />, document.body);
+
