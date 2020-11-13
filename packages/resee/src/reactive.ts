@@ -18,9 +18,10 @@ let hideRefMode = false;
 
 export function wrapFnHideRefMode<T extends Function>(fn: T) {
   return (function(...args: any[]) {
+    let temp = hideRefMode;
     hideRefMode = true;
     const r = fn(...args);
-    hideRefMode = false;
+    hideRefMode = temp;
     return r;
   } as unknown) as T;
 }

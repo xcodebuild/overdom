@@ -1,6 +1,6 @@
 import { schedule } from './batcher';
 import { Fragment, FragmentList } from './fragment';
-import { createAutorun, createReactive, Ref, wrapFnHideRefMode } from './reactive';
+import { createAutorun, createReactive, Ref, runInRefMode, wrapFnHideRefMode } from './reactive';
 
 export function directive<T extends () => Fragment>(func: T) {
   // @ts-ignore
@@ -69,11 +69,14 @@ export function $map<T>(
 
   const fragmentList = new FragmentList();
 
-  const mapFuncWrap = wrapFnHideRefMode((item: ReactiveItem<T>) => {
-    const fragment = mapFunc(item);
-    fragment.reactiveItem = item;
-    return fragment;
-  });
+  const mapFuncWrap = (item: ReactiveItem<T>) => {
+    let fragment: Fragment;
+    runInRefMode(() => {
+      fragment = mapFunc(item);
+      fragment.reactiveItem = item;
+    })
+    return fragment!;
+  };
 
   const keyFuncWrap = wrapFnHideRefMode((item: ReactiveItem<T>) => {
     const r = keyFunc(item);
@@ -144,7 +147,9 @@ export function $map<T>(
 
       // apply new reactiveIndex
       fragmentList.childFragments.forEach(
-        (child, index) => (child!.reactiveItem!.index = index)
+        (child, index) => {
+          return child!.reactiveItem!.index = index;
+        }
       );
     });
   });

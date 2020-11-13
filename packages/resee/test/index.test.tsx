@@ -149,6 +149,8 @@ describe('Basic', () => {
     await waitBatch();
     document.getElementById('getThis')!.click();
 
+    await waitBatch();
+
     const todos = generateTodo([1, 2, 3, 4]);
 
     // ADD
