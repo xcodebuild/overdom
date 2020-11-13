@@ -12,7 +12,7 @@ export default class Hello {
 
 ## State
 
-We can use `reactive(object)` to create state model.
+We can use `@reactive` to make attribute reactive
 
 - Use in `JSX`
 - Mutate it to update in callbacks
@@ -36,7 +36,7 @@ export default class CounterApp {
 
 ## Computed
 
-- `get x()` in `reactive(object)` to create computed
+- `@computed get x()` to create computed
 - computed result is same with reactive but readonly
 
 ### Example
@@ -64,8 +64,8 @@ export default class CounterApp {
 
 ## Component
 
-- Function is just component
-- Props is a object (maybe reactive)
+- Class with `rendeer` is just component
+- `this.props` is a object, you will need to add `@reactive` for it if need reactive
 
 ```demo
 class Display {
