@@ -25,7 +25,7 @@ Get started from here: [https://xcodebuild.github.io/resee/](https://xcodebuild.
 
 See [Virtual DOM is pure overhead](https://svelte.dev/blog/virtual-dom-is-pure-overhead), and `Svelte` is cool but another language.
 
-So I want to write `JSX/TSX` without virtual-dom or too many build tools.
+So I want to just write `JavaScript & TypeScript` without virtual-dom.
 
 ### Status
 

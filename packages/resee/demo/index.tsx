@@ -18,7 +18,6 @@ export default class App {
               // map
               // item.value mean item
               // item.index mean index
-              console.log(item.index)
               return <div>
                   [{item.index}] {item.value}
                   <button onClick={() => this.list.splice(item.index, 1)}>REMOVE</button>
