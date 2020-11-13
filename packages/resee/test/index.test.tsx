@@ -129,12 +129,6 @@ describe('Basic', () => {
               <li>
                 Text {item.value.text}
                 [ID {item.index}]
-                <button
-                  onClick={() =>
-                    (document.body.innerHTML =
-                      document.body.innerHTML + item.index)
-                  }
-                ></button>
               </li>
             ),
             item => {
@@ -155,29 +149,26 @@ describe('Basic', () => {
 
     // ADD
     // 1 2 3 4
-      app.list.push(todos[1]);
-      app.list.push(todos[2]);
-      app.list.push(todos[3]);
+    app.list.push(todos[1]);
+    app.list.push(todos[2]);
+    app.list.push(todos[3]);
 
     await waitBatch();
-    document.body.querySelectorAll('button').forEach(btn => btn.click());
     expect(document.body.innerHTML).toMatchSnapshot();
 
     // REMOVE
     // 1 2 4
-      app.list.splice(2, 1);
+    app.list.splice(2, 1);
 
     await waitBatch();
-    document.body.querySelectorAll('button').forEach(btn => btn.click());
     expect(document.body.innerHTML).toMatchSnapshot();
 
     // MOVE
     // 1 4 2
-      app.list.splice(1, 1);
-      app.list.push(todos[1]);
+    app.list.splice(1, 1);
+    app.list.push(todos[1]);
 
     await waitBatch();
-    document.body.querySelectorAll('button').forEach(btn => btn.click());
     expect(document.body.innerHTML).toMatchSnapshot();
   });
 

@@ -301,13 +301,17 @@ class ProxyRefImpl<T extends object = any> {
               } else if (key === 'splice') {
                 const index = args[0];
                 const count = args[1];
+                const inserts = args.slice(2) as any[];
+
+                const insertsLen = inserts.length;
+
                 const len = obj.length;
 
                 for (let i = 0; i < len; i++) {
                   if (i >= index && i < index + count) {
                     refMap.delete('' + i);
                   } else if (i >= index + count) {
-                    refMap.set('' + (i - count), refMap.get('' + i)!);
+                    refMap.set('' + (i - count + insertsLen), refMap.get('' + i)!);
                     refMap.delete('' + i);
                   }
                 }
