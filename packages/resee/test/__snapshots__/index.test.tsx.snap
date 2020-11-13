@@ -8,11 +8,11 @@ exports[`Basic $if works 3`] = `"<div><button>Count 3</button><div>Bigger than 2
 
 exports[`Basic $if works 4`] = `"<div><button>Count 4</button><div>Bigger than 2<span>YES 4</span></div></div>"`;
 
-exports[`Basic $mapKeyd works 1`] = `"<ul><li>Text new todo 1[ID 0]<button></button></li><!--empty--><li>Text new todo 2[ID 1]<button></button></li><li>Text new todo 3[ID 2]<button></button></li><li>Text new todo 4[ID 3]<button></button></li></ul>0123"`;
+exports[`Basic $mapKeyd works 1`] = `"<ul><button id=\\"getThis\\"></button><li>Text new todo 1[ID 0]<button></button></li><!--empty--><li>Text new todo 2[ID 1]<button></button></li><li>Text new todo 3[ID 2]<button></button></li><li>Text new todo 4[ID 3]<button></button></li></ul>0123"`;
 
-exports[`Basic $mapKeyd works 2`] = `"<ul><li>Text new todo 1[ID 0]<button></button></li><!--empty--><li>Text new todo 2[ID 1]<button></button></li><li>Text new todo 3[ID 2]<button></button></li><li>Text new todo 4[ID 3]<button></button></li></ul>0123"`;
+exports[`Basic $mapKeyd works 2`] = `"<ul><button id=\\"getThis\\"></button><li>Text new todo 1[ID 0]<button></button></li><!--empty--><li>Text new todo 2[ID 1]<button></button></li><li>Text new todo 3[ID 2]<button></button></li><li>Text new todo 4[ID 3]<button></button></li></ul>0123"`;
 
-exports[`Basic $mapKeyd works 3`] = `"<ul><li>Text new todo 1[ID 0]<button></button></li><!--empty--><li>Text new todo 2[ID 1]<button></button></li><li>Text new todo 3[ID 2]<button></button></li><li>Text new todo 4[ID 3]<button></button></li></ul>0123"`;
+exports[`Basic $mapKeyd works 3`] = `"<ul><button id=\\"getThis\\"></button><li>Text new todo 1[ID 0]<button></button></li><!--empty--><li>Text new todo 2[ID 1]<button></button></li><li>Text new todo 3[ID 2]<button></button></li><li>Text new todo 4[ID 3]<button></button></li></ul>0123"`;
 
 exports[`Basic attr can be reactive 1`] = `"<ul class=\\"0\\"><button class=\\"0\\">CLICK 0</button></ul>"`;
 
@@ -26,8 +26,8 @@ exports[`Basic can render mutiple items 1`] = `"<div><button>CLICK</button>Count
 
 exports[`Basic can render mutiple items 2`] = `"<div><button>CLICK</button>Count 1</div>"`;
 
-exports[`Basic props should be reactive 1`] = `"<div><div>Hello test</div><div>Hello name</div></div>"`;
+exports[`Basic props should be reactive 1`] = `"<div><button id=\\"getThis\\"></button><div>Hello test</div><div>Hello name</div></div>"`;
 
-exports[`Basic props should be reactive 2`] = `"<div><div>Hello test</div><div>Hello newName</div></div>"`;
+exports[`Basic props should be reactive 2`] = `"<div><button id=\\"getThis\\"></button><div>Hello test</div><div>Hello newName</div></div>"`;
 
 exports[`Basic should render hello world 1`] = `"<div>Hello World</div>"`;

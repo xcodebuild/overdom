@@ -1,6 +1,6 @@
 import { schedule } from './batcher';
 import { isDirective } from './directive';
-import { createAutorun, isRef, reactiveComponent, Ref, wrapFnHideRefMode } from './reactive';
+import { createAutorun, isRef, reactiveComponent, Ref, runInRefMode, wrapFnHideRefMode } from './reactive';
 import { Fragment } from './fragment';
 
 function buildComponent(
@@ -8,7 +8,10 @@ function buildComponent(
   props: Record<string, any> = {}
 ) {
   const component = reactiveComponent(comp as any, props);
-  const fragment = component.render();
+  let fragment: Fragment;
+  runInRefMode(() => {
+    fragment = component.render();
+  });
   return fragment!;
 }
 
@@ -24,7 +27,17 @@ function setAttr(node: HTMLElement, key: string, value: any) {
     key = 'class';
   } else if (key === 'dangerouslySetInnerHTML') {
     const html = value.__html;
-    node.innerHTML = html;
+    if (isRef(html)) {
+      createAutorun(() => {
+        const newValue = html.value;
+        schedule(() => {
+          // @ts-ignore
+          node.innerHTML = newValue;
+        });
+      });
+    } else {
+      node.innerHTML = html;
+    }
     return;
   } else if (key === 'ref') {
     // value should be a (ref) => void
@@ -94,14 +107,16 @@ export function h(
           tag.appendChild(document.createTextNode(child));
         } else if (isRef(child)) {
           const reactiveVal = child as Ref<any>;
-          const textNode = document.createTextNode('' + reactiveVal.value);
+          const val = reactiveVal.value;
+
+          // textnode
+          const textNode = document.createTextNode('' + val);
           createAutorun(() => {
             const newValue = reactiveVal.value;
             schedule(() => {
               textNode.nodeValue = newValue;
             });
           });
-
           tag.appendChild(textNode);
         } else if (isDirective(child)) {
           const directive = child as () => Fragment;
@@ -117,11 +132,32 @@ export function h(
     fragment.appendChild(tag);
   } else if (typeof type === 'function') {
     // component
-
     return buildComponent(type as () => Fragment, {
       ...props,
       children: children,
     });
+  } else if (isRef(type)) {
+    // reactive component
+    const comp = type as Ref;
+    let frag: Fragment;
+    createAutorun((notrack) => {
+      if (!frag) {
+        const component = comp.value;
+        notrack(() => {
+          frag = buildComponent(component, {
+            ...props,
+            children: children,
+          });
+        });
+      } else {
+        // TODO: replace
+        // frag.replaceWith(buildComponent(comp.value, {
+        //   ...props,
+        //   children: children,
+        // }));
+      }
+    });
+    return frag!;
   }
   return fragment;
 }

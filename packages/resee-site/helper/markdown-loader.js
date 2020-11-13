@@ -42,7 +42,11 @@ marked.use({
 module.exports = function markdownLoader(source) {
     const content = marked(source);
     return `
-    import { h, reactive, autorun, $if, $map } from 'resee';
+    import { h, reactive, computed, autorun, $if, $map } from 'resee';
     import CodeBox from '${path.join(__dirname, './code-box')}'
-    export default () => <div>${content}</div>`;
+    export default class Demo {
+        render() {
+            return <div>${content}</div>;
+        }
+    }`;
 }

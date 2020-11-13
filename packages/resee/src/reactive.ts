@@ -25,6 +25,14 @@ export function wrapFnHideRefMode<T extends Function>(fn: T) {
   } as unknown) as T;
 }
 
+export function runInRefMode(cb: Function) {
+  let temp = hideRefMode;
+  hideRefMode = false;
+  const r = cb();
+  hideRefMode = temp;
+  return r;
+}
+
 const proxyObjMap = new WeakMap<Object, Object>();
 
 class DepsManager {
@@ -204,8 +212,10 @@ interface Component {
 }
 
 export function reactiveComponent(component: new () => Fragment, props?: Record<string, any>) {
-  const comp = createReactive(new component()) as any as Component;
-  comp.props = createReactive(props || {}, true);
+  const ins = new component();
+  // @ts-ignore
+  ins.props = props || {};
+  const comp = createReactive(ins) as any as Component;
   return comp;
 }
 
@@ -313,7 +323,7 @@ class ProxyRefImpl<T extends object = any> {
         if (isProxyRef(ref)) {
           return ref.value;
         }
-        if (hideRefMode) {
+        if (hideRefMode && isRef(ref)) {
           return ref.value;
         }
         return getRef(key);
@@ -321,6 +331,12 @@ class ProxyRefImpl<T extends object = any> {
       set(_, key, value) {
         const ref = getRef(key);
         if (isRef(ref)) {
+          // if origin ref is not proxyRef
+          // but value is a object
+          if (value && typeof value === 'object' && (ref as ProxyRefImpl)[ProxyRefSymbol] !== true) {
+            refMap.set(key, new ProxyRefImpl(value, true));
+            return true;
+          }
           ref.value = value;
         } else {
           (that._obj as any)[key] = value;

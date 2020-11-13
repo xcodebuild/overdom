@@ -3,8 +3,10 @@
 ## Hello world
 
 ```demo
-export default function Hello() {
-    return <div>Hello World</div>;
+export default class Hello {
+    render() {
+        return <div>Hello World</div>;
+    }
 }
 ```
 
@@ -16,17 +18,19 @@ We can use `reactive(object)` to create state model.
 - Mutate it to update in callbacks
 
 ```demo
-export default function CounterApp() {
-    const counter = reactive({
-        count: 0,
-    });
-    const inc = () => counter.count ++;
-    return <div>
-        Counter: {counter.count}
-        <p>
-            <button onClick={inc}>ADD</button>
-        </p>
-    </div>;
+export default class CounterApp {
+    @reactive count = 0;
+    inc() {
+        this.count ++;
+    }
+    render() {
+        return <div>
+            Counter: {this.count}
+            <p>
+                <button onClick={this.inc}>ADD</button>
+            </p>
+        </div>;
+    }
 }
 ```
 
@@ -37,22 +41,24 @@ export default function CounterApp() {
 
 ### Example
 ```demo
-export default function CounterApp() {
-    const counter = reactive({
-        count: 0,
-        // get means computed
-        get doubleCount() {
-            return counter.count * 2;
-        }
-    });
-    const inc = () => counter.count ++;
-    return <div>
-        <p> Counter: {counter.count} </p>
-        <p> Double: {counter.doubleCount} </p>
-        <p>
-            <button onClick={inc}>ADD</button>
-        </p>
-    </div>;
+export default class CounterApp {
+    @reactive count = 0;
+    @computed get doubleCount() {
+        return this.count * 2;
+    }
+    inc() {
+        this.count ++;
+    }
+
+    render() {
+        return <div>
+            <p> Counter: {this.count} </p>
+            <p> Double: {this.doubleCount} </p>
+            <p>
+                <button onClick={this.inc}>ADD</button>
+            </p>
+        </div>;
+    }
 }
 ```
 
@@ -62,20 +68,26 @@ export default function CounterApp() {
 - Props is a object (maybe reactive)
 
 ```demo
-function Display({ count }) {
-    return <p>I will display count from {'<Display/>'}: {count}</p>;
+class Display {
+    @reactive props;
+    render() {
+        return <p>I will display count from {'<Display/>'}: {this.props.count}</p>;
+    }
 }
-export default function CounterApp() {
-    const counter = reactive({
-        count: 0,
-    });
-    const inc = () => counter.count ++;
-    return <div>
-        <Display count={counter.count}/>
+
+export default class CounterApp {
+    @reactive count = 0;
+    inc() {
+        this.count ++;
+    }
+    render() {
+      return <div>
+        <Display count={this.count}/>
         <p>
-            <button onClick={inc}>ADD</button>
+            <button onClick={this.inc}>ADD</button>
         </p>
-    </div>;
+      </div>;
+    }
 }
 ```
 
@@ -86,29 +98,33 @@ export default function CounterApp() {
 Use `$if` to do a switch logic in `JSX`.
 
 ```demo
-export default function CounterApp() {
-    const counter = reactive({
-        count: 0,
-    });
-    const inc = () => counter.count ++;
+export default class CounterApp {
+    @reactive count = 0;
 
-    return <div>
-        Counter: {counter.count}
+    inc() {
+        this.count ++;
+    }
+
+    render() {
+      return <div>
+        Counter: {this.count}
         <p>
-            <button onClick={inc}>ADD</button>
+            <button onClick={this.inc}>ADD</button>
         </p>
 
         <p>count >= 3 : 
         {$if(
             // cond
-            () => counter.count >= 3,
+            () => this.count >= 3,
             // yes
-            () => <div>YES {counter.count}</div>,
+            () => <div>YES {this.count}</div>,
             // NO
-            () => <div>NO {counter.count}</div>,
+            () => <div>NO {this.count}</div>,
         )}
         </p>
-    </div>;
+      </div>;
+    }
+    
 }
 ```
 
@@ -119,39 +135,37 @@ Use `$map` for a list map
 ```demo
 let count = 0;
 
-export default function App() {
-  const todolist = reactive({
-      list: ['test' + count ++ ],
-  });
+export default class App {
+  @reactive list = ['test' + count ++];
 
-  const addTodo = () => {
+  addTodo() {
       // use array.push/splice/shift/unshift to mutate
-      todolist.list.push('new todo' + count ++);
+      this.list.push('new todo' + count ++);
   }
 
-  return <ul>
-    <button onClick={addTodo}>ADD TODO</button>
-    {$map(
-        todolist.list,  // array
-        (item) => {
-            // map
-            // item.value mean item
-            // item.index mean index
-            return <div>
-                [{item.index}] {item.value}
-                <button onClick={() => todolist.list.splice(item.index, 1)}>REMOVE</button>
-            </div>;
-        },
-        (item) => {
-            // key map, alternative to <li key> in React
-            // must be string or number, and keep unique in list
-            return item.value;
-        }
-    )}
-  </ul>;
+  render () {
+    return <ul>
+      <button onClick={this.addTodo}>ADD TODO</button>
+      {$map(
+          this.list,  // array
+          (item) => {
+              // map
+              // item.value mean item
+              // item.index mean index
+              return <div>
+                  [{item.index}] {item.value}
+                  <button onClick={() => this.list.splice(item.index, 1)}>REMOVE</button>
+              </div>;
+          },
+          (item) => {
+              // key map, alternative to <li key> in React
+              // must be string or number, and keep unique in list
+              return item.value;
+          }
+      )}
+    </ul>;
+  }
 }
-
-
 ```
 
 ## PlayGround
