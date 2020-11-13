@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Basic $if do not update when cond result keep same 1`] = `"<div><button id=\\"add\\"></button><div id=\\"no\\">NO</div></div>"`;
+
+exports[`Basic $if do not update when cond result keep same 2`] = `"<div><button id=\\"add\\"></button><div id=\\"no\\">NO</div></div>"`;

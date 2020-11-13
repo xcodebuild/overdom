@@ -1,12 +1,7 @@
 import { render, h, reactive, $if } from '../src';
-import { schedule } from '../src/batcher';
 import { $map } from '../src/directive';
 import '../src/polyfill/createRange';
-
-const waitBatch = () =>
-  new Promise(r => {
-    schedule(r);
-  });
+import { waitBatch } from './utils';
 
 describe('Basic', () => {
   beforeEach(() => {

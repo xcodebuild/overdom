@@ -26,9 +26,18 @@ export function wrapFnHideRefMode<T extends Function>(fn: T) {
   } as unknown) as T;
 }
 
+
 export function runInRefMode(cb: Function) {
   let temp = hideRefMode;
   hideRefMode = false;
+  const r = cb();
+  hideRefMode = temp;
+  return r;
+}
+
+export function runInHideRefMode(cb: Function) {
+  let temp = hideRefMode;
+  hideRefMode = true;
   const r = cb();
   hideRefMode = temp;
   return r;
@@ -168,8 +177,11 @@ class ComputedRefImpl<T = any> {
   }
 
   trigger() {
+    let lastValue = this._value;
     this._recompute();
-    depsManager.trigger(this);
+    if (this._value !== lastValue) {
+      depsManager.trigger(this);
+    }
   }
 }
 
