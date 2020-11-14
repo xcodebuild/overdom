@@ -1,6 +1,7 @@
 ![coverage](https://codecov.io/gh/xcodebuild/overdom/branch/master/graphs/badge.svg?branch=master)
 ![CI](https://github.com/xcodebuild/overdom/workflows/CI/badge.svg)
-![size](https://img.shields.io/bundlephobia/minzip/overdom)
+![size](https://img.badgesize.io/https:/unpkg.com/overdom/dist/overdom.cjs.production.min.js?label=gzip%20size&compression=gzip&style=flat-square)
+
 
 # overdom
 ```
