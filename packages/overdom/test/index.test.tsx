@@ -272,4 +272,20 @@ describe('Basic', () => {
     await waitBatch();
     expect(document.body.innerHTML).toMatchSnapshot();
   });
+
+  it('ref should get DOM', async () => {
+    let refDom: HTMLElement;
+    class App {
+      onRef(dom: HTMLElement) {
+        refDom = dom;
+      }
+      render() {
+        return <div id="target" ref={this.onRef}></div>;
+      }
+    }
+    render(<App />, document.body);
+
+    await waitBatch();
+    expect(refDom!).toEqual(document.getElementById('target')!);
+  });
 });
