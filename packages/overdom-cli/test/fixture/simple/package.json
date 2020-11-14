@@ -1,0 +1,9 @@
+{
+    "name": "simple",
+    "private": true,
+    "dependencies": {
+    },
+    "scripts": {
+        "build": "../../../bin/overdom build"
+    }
+}
