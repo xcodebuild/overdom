@@ -18,6 +18,12 @@ exports[`Basic attr can be reactive 1`] = `"<ul class=\\"0\\"><button class=\\"0
 
 exports[`Basic attr can be reactive 2`] = `"<ul class=\\"1\\"><button class=\\"1\\">CLICK 1</button></ul>"`;
 
+exports[`Basic can reactive a component 1`] = `"<button><div>ONE</div></button>"`;
+
+exports[`Basic can reactive a component 2`] = `"<button><div>TWO</div></button>"`;
+
+exports[`Basic can reactive a component 3`] = `"<button><div>ONE</div></button>"`;
+
 exports[`Basic can reactive count 1`] = `"<button>Count 0</button>"`;
 
 exports[`Basic can reactive count 2`] = `"<button>Count 1</button>"`;

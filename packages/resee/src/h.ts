@@ -150,11 +150,12 @@ export function h(
           });
         });
       } else {
-        // TODO: replace
-        // frag.replaceWith(buildComponent(comp.value, {
-        //   ...props,
-        //   children: children,
-        // }));
+        const newFrag = buildComponent(comp.value, {
+          ...props,
+          children: children,
+        });
+        frag.replaceWith(newFrag);
+        frag = newFrag;
       }
     });
     return frag!;

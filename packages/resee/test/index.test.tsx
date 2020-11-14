@@ -1,4 +1,4 @@
-import { render, h, reactive, $if } from '../src';
+import { render, h, reactive, $if, computed } from '../src';
 import { $map } from '../src/directive';
 import '../src/polyfill/createRange';
 import { waitBatch } from './utils';
@@ -229,6 +229,46 @@ describe('Basic', () => {
     expect(document.body.innerHTML).toMatchSnapshot();
 
     app.name = 'newName';
+    await waitBatch();
+    expect(document.body.innerHTML).toMatchSnapshot();
+  });
+
+
+  it('can reactive a component', async () => {
+    class ComponentOne {
+      render() {
+        return <div>ONE</div>;
+      }
+    }
+    class ComponentTwo {
+      render() {
+        return <div>TWO</div>;
+      }
+    }
+    class App {
+      @reactive isComponentOne = true;
+      @computed get component() {
+        return this.isComponentOne ? ComponentOne: ComponentTwo;
+      }
+      handleClick() {
+        this.isComponentOne = !this.isComponentOne;
+      }
+      render () {
+        const Comp = this.component;
+        return <button onClick={this.handleClick}>
+          <Comp />
+        </button>;
+      }
+    }
+    render(<App />, document.body);
+    await waitBatch();
+    expect(document.body.innerHTML).toMatchSnapshot();
+
+    document.body.querySelector('button')!.click();
+    await waitBatch();
+    expect(document.body.innerHTML).toMatchSnapshot();
+
+    document.body.querySelector('button')!.click();
     await waitBatch();
     expect(document.body.innerHTML).toMatchSnapshot();
   });
