@@ -1,7 +1,7 @@
 {
     "private": "true",
     "name": "overdom-site",
-    "version": "0.1.13",
+    "version": "0.1.14",
     "devDependencies": {
         "overdom-cli": "^0.1.12"
     },
@@ -9,7 +9,7 @@
         "classnames": "^2.2.6",
         "marked": "^1.2.3",
         "normalize.css": "^8.0.1",
-        "overdom": "^0.1.13"
+        "overdom": "^0.1.14"
     },
     "scripts": {
         "build": "overdom build",
