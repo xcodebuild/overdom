@@ -22,6 +22,23 @@ describe('LifeCycle', () => {
         expect(mounted).toEqual(true);
     });
 
+    it('can get reactive value in onMount', async () => {
+        let count = 0;
+        class App extends Component {
+            @reactive count = 2;
+            onMount() {
+                count = this.count;
+            }
+            render() {
+                return <div>Hey</div>;
+            }
+        }
+        expect(count).toEqual(0);
+        render(<App />, document.body);
+        await waitBatch();
+        expect(count).toEqual(2);
+    });
+
     it('onMount & onDestory', async () => {
         let oneMount = false;
         let twoMount = false;

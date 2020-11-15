@@ -2,6 +2,7 @@ import { schedule } from './batcher';
 import { ReactiveItem } from './directive';
 import { insert } from './utils';
 import { Component } from './h';
+import { runInHideRefMode } from './reactive';
 
 export class Fragment {
   fragment = document.createDocumentFragment();
@@ -42,16 +43,20 @@ export class Fragment {
 
   onMount() {
     schedule(() => {
-      this.components.forEach(comp => {
-        comp.onMount && comp.onMount();
+      runInHideRefMode(() => {
+        this.components.forEach(comp => {
+          comp.onMount && comp.onMount();
+        });
       });
     }, true);
   }
 
   onDestory() {
     schedule(() => {
-      this.components.forEach(comp => {
-        comp.onDestory && comp.onDestory();
+      runInHideRefMode(() => {
+        this.components.forEach(comp => {
+          comp.onDestory && comp.onDestory();
+        });
       });
     }, true);
   }

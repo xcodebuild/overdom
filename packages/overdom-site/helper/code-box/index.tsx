@@ -20,6 +20,11 @@ export default class Codebox extends Component<{
         super(props);
         this.code = props.code;
     }
+
+    onMount() {
+        // @ts-ignore
+        this.code = Prism.highlight(htmlDecode(this.code), Prism.languages.javascript);
+    }
     
     render() {
         const Component = this.props.component;
