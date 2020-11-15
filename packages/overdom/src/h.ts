@@ -11,8 +11,15 @@ function buildComponent(
   let fragment: Fragment;
   runInRefMode(() => {
     fragment = component.render();
+    fragment.components.push(component);
   });
   return fragment!;
+}
+
+export interface Component {
+  render: () => Fragment,
+  onMount?: () => void,
+  onDestory?: () => void,
 }
 
 function setAttr(node: HTMLElement, key: string, value: any) {
@@ -121,9 +128,9 @@ export function h(
         } else if (isDirective(child)) {
           const directive = child as () => Fragment;
           const fragment = directive();
-          fragment.appendToContainer(tag);
+          fragment.appendToContainer(tag, fragment);
         } else if (Fragment.isFragment(child)) {
-          (child as Fragment).appendToContainer(tag);
+          (child as Fragment).appendToContainer(tag, fragment);
         } else {
           tag.appendChild(child);
         }
@@ -164,7 +171,7 @@ export function h(
 }
 
 export function render(fragment: Fragment, container: HTMLElement) {
-  fragment.appendToContainer(container);
+  fragment.appendToContainer(container, null);
 }
 
 declare global {

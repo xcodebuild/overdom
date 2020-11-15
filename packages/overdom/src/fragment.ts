@@ -1,6 +1,7 @@
 import { schedule } from './batcher';
 import { ReactiveItem } from './directive';
 import { insert } from './utils';
+import { Component } from './h';
 
 export class Fragment {
   fragment = document.createDocumentFragment();
@@ -8,6 +9,8 @@ export class Fragment {
   childNodes: Node[] = [];
   key?: number | string;
   reactiveItem?: ReactiveItem<any>;
+
+  components: Component[] = [];
 
   static isFragment(obj: unknown) {
     if (!obj) {
@@ -23,18 +26,46 @@ export class Fragment {
     this.childNodes.push(node);
   }
 
-  appendToContainer(container: Node) {
+  appendToContainer(container: Node, containerFragment: Fragment | null) {
     this.container = container;
     this.createEmpty();
     container.appendChild(this.fragment);
+    if (this.components.length > 0) {
+      if (containerFragment !== null) {
+        containerFragment.components = this.components.concat(containerFragment.components);
+      } else {
+        // render, trigger onMount
+        this.onMount();
+      }
+    }
+  }
+
+  onMount() {
+    schedule(() => {
+      this.components.forEach(comp => {
+        comp.onMount && comp.onMount();
+      });
+    }, true);
+  }
+
+  onDestory() {
+    schedule(() => {
+      this.components.forEach(comp => {
+        comp.onDestory && comp.onDestory();
+      });
+    }, true);
   }
 
   replaceWith(fragment: Fragment) {
     fragment.container = this.container;
-    const range = this.createRange();
-    range.deleteContents();
-    range.insertNode(fragment.fragment);
-    range.detach();
+    schedule(() => {
+      const range = this.createRange();
+      range.deleteContents();
+      range.insertNode(fragment.fragment);
+      range.detach();
+    });
+    this.onDestory();
+    fragment.onMount();
   }
 
   createEmpty() {
@@ -83,7 +114,7 @@ export class FragmentList extends Fragment {
   childFragments: Fragment[] = [];
 
   appendFragment(child: Fragment, key: string | number) {
-    child.appendToContainer(this.fragment);
+    child.appendToContainer(this.fragment, this);
     this.childFragments.push(child);
     child.key = key;
   }

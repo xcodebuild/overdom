@@ -1,4 +1,3 @@
-import { schedule } from './batcher';
 import { Fragment, FragmentList } from './fragment';
 import { createAutorun, createReactive, Ref, runInRefMode, wrapFnHideRefMode } from './reactive';
 
@@ -32,10 +31,8 @@ export function $if(
       }
 
       const newFragment = newResult ? yes() : no();
-      schedule(() => {
-        lastFragment.replaceWith(newFragment);
-        lastFragment = newFragment;
-      });
+      lastFragment.replaceWith(newFragment);
+      lastFragment = newFragment;
       lastResult = newResult;
     });
 

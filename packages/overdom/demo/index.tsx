@@ -5,10 +5,16 @@ class ComponentOne {
     render() {
       return <div>ONE</div>;
     }
+    onMount() {
+      console.log('mount one');
+    }
   }
   class ComponentTwo {
     render() {
       return <div>TWO</div>;
+    }
+    onMount() {
+      console.log('mount two');
     }
   }
   class App {
