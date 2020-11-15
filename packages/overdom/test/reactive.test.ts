@@ -1,11 +1,11 @@
-import { computed, reactive } from "../src";
+import { computed, reactive, Component } from "../src";
 import { createReactive, runInHideRefMode } from '../src/reactive';
 
 describe('Reactive', () => {
     it('computed should not trigger when result not change', () => {
         let moreThanThreeCount = 0;
         let yesOrNoCount = 0;
-        class Model {
+        class Model extends Component {
             @reactive count = 1;
             @computed get moreThanThree() {
                 moreThanThreeCount ++;

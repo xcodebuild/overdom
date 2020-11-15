@@ -1,4 +1,4 @@
-import { Fragment } from './fragment';
+import { Component } from './h';
 
 const RefSymbol = Symbol('ref');
 const InternalRawSymbol = Symbol('internal_raw');
@@ -219,16 +219,9 @@ function getMetaKeys(prototype: Object) {
   return metasMap.get(prototype);
 }
 
-interface Component {
-  render(): Fragment;
-  props: Record<string, any>;
-}
-
-export function reactiveComponent(component: new () => Fragment, props?: Record<string, any>) {
-  const ins = new component();
-  // @ts-ignore
-  ins.props = props || {};
-  const comp = createReactive(ins) as any as Component;
+export function reactiveComponent(component: any, props?: Record<string, any>) {
+  const ins = new component(props || {});
+  const comp = createReactive(ins) as any as Component<any>;
   return comp;
 }
 

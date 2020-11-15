@@ -1,4 +1,4 @@
-import { reactive, h, autorun } from "overdom";
+import { reactive, h, autorun, Component } from "overdom";
 import classnames from 'classnames';
 
 import './index.less';
@@ -10,24 +10,22 @@ function htmlDecode(input){
     return e.childNodes.length === 0 ? "" : e.childNodes[0].nodeValue;
   }
 
-export default class Codebox {
-    @reactive props: {
-        code: string,
-        component: Function,
+export default class Codebox extends Component<{
+    component: Function,
+    code: string,
+}> {
+    @reactive code: string;
+
+    constructor(props) {
+        super(props);
+        this.code = props.code;
     }
     
-    handleCodeRef(dom: HTMLElement) {
-        setTimeout(() => {
-            // @ts-ignore
-            dom.innerHTML = Prism.highlight(htmlDecode(dom.innerHTML), Prism.languages.javascript);
-        });
-    };
-
     render() {
         const Component = this.props.component;
         return <div className="codebox">
             <div>
-                <pre><code ref={this.handleCodeRef} dangerouslySetInnerHTML={{__html: this.props.code}}></code></pre>
+                <pre><code dangerouslySetInnerHTML={{__html: this.code}}></code></pre>
             </div>
 
             <div className="demo">

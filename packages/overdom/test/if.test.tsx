@@ -1,4 +1,4 @@
-import { $if, reactive, h, render } from "../src";
+import { $if, reactive, h, render, Component } from "../src";
 import { waitBatch } from './utils';
 
 describe('Basic', () => {
@@ -7,7 +7,7 @@ describe('Basic', () => {
     });
 
     it('$if do not update when cond result keep same', async () => {
-        class App {
+        class App extends Component {
             @reactive count = 1;
 
             render() {

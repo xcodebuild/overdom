@@ -1,36 +1,32 @@
-import { h, reactive, render, autorun, $map, computed, $if } from "../src";
+import { h, reactive, render, autorun, $map, computed, $if, Component } from "../src";
 import { createReactive } from "../src/reactive";
+class Hello extends Component {
+  @reactive props!: {
+    name: string,
+  }
+  constructor(props) {
+    super(props);
+    console.log(this.props.name);
+  }
 
-class ComponentOne {
-    render() {
-      return <div>ONE</div>;
-    }
-    onMount() {
-      console.log('mount one');
-    }
+  render() {
+    return <div>Hello {this.props.name}</div>
   }
-  class ComponentTwo {
-    render() {
-      return <div>TWO</div>;
-    }
-    onMount() {
-      console.log('mount two');
-    }
+}
+
+let app!: App;
+
+class App extends Component {
+  @reactive name = 'name';
+  render() {
+    return (
+      <div>
+        <button onClick={() => {this.name += ' test'}}>CLICK</button>
+
+        <Hello name="test" />
+        <Hello name={this.name} />
+      </div>
+    );
   }
-  class App {
-    @reactive isComponentOne = true;
-    @computed get component() {
-      return this.isComponentOne ? ComponentOne: ComponentTwo;
-    }
-    handleClick() {
-      this.isComponentOne = !this.isComponentOne;
-    }
-    render () {
-      const Comp = this.component;
-      return <button onClick={this.handleClick}>
-        <Comp />
-      </button>;
-    }
-  }
-  render(<App />, document.body);
-  
+}
+render(<App />, document.body);

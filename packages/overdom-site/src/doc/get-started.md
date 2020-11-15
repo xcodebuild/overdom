@@ -3,7 +3,7 @@
 ## Hello world
 
 ```demo
-export default class Hello {
+export default class Hello extends Component {
     render() {
         return <div>Hello World</div>;
     }
@@ -18,7 +18,7 @@ We can use `@reactive` to make attribute reactive
 - Mutate it to update in callbacks
 
 ```demo
-export default class CounterApp {
+export default class CounterApp extends Component {
     @reactive count = 0;
     inc() {
         this.count ++;
@@ -41,7 +41,7 @@ export default class CounterApp {
 
 ### Example
 ```demo
-export default class CounterApp {
+export default class CounterApp extends Component {
     @reactive count = 0;
     @computed get doubleCount() {
         return this.count * 2;
@@ -64,18 +64,17 @@ export default class CounterApp {
 
 ## Component
 
-- Class with `rendeer` is just component
-- `this.props` is a object, you will need to add `@reactive` for it if need reactive
+- Class with extends `Component` is a component
+- `this.props` is props reactive object
 
 ```demo
-class Display {
-    @reactive props;
+class Display extends Component {
     render() {
         return <p>I will display count from {'<Display/>'}: {this.props.count}</p>;
     }
 }
 
-export default class CounterApp {
+export default class CounterApp extends Component {
     @reactive count = 0;
     inc() {
         this.count ++;
@@ -98,7 +97,7 @@ export default class CounterApp {
 Use `$if` to do a switch logic in `JSX`.
 
 ```demo
-export default class CounterApp {
+export default class CounterApp extends Component {
     @reactive count = 0;
 
     inc() {
@@ -135,7 +134,7 @@ Use `$map` for a list map
 ```demo
 let count = 0;
 
-export default class App {
+export default class App extends Component {
   @reactive list = ['test' + count ++];
 
   addTodo() {
@@ -172,7 +171,7 @@ export default class App {
 
 ```demo
 let count = 0;
-export default class App {
+export default class App extends Component {
   @reactive list = [{
     id: count++,
     text: 'todo',
@@ -234,7 +233,7 @@ export default class App {
 - `onDestory()` will be called after component's DOM is removed from document
 
 ```demo
-class ComponentOne {
+class ComponentOne extends Component {
     render() {
         return <div>ONE</div>;
     }
@@ -245,7 +244,7 @@ class ComponentOne {
         console.log('one destoryed');
     }
 }
-class ComponentTwo {
+class ComponentTwo extends Component {
     render() {
         return <div>TWO</div>;
     }
@@ -256,7 +255,7 @@ class ComponentTwo {
         console.log('two destoryed');
     }
 }
-export default class App {
+export default class App extends Component {
     @reactive isComponentOne = true;
     @computed get component() {
       return this.isComponentOne ? ComponentOne: ComponentTwo;

@@ -1,4 +1,4 @@
-import { render, h, reactive, $if, computed } from '../src';
+import { render, h, reactive, $if, computed, Component } from '../src';
 import { $map } from '../src/directive';
 import '../src/polyfill/createRange';
 import { waitBatch } from './utils';
@@ -14,7 +14,7 @@ describe('Basic', () => {
   });
 
   it('can reactive count', async () => {
-    class App {
+    class App extends Component {
       @reactive count = 0;
       handleClick() {
         this.count ++;
@@ -33,7 +33,7 @@ describe('Basic', () => {
   });
 
   it('can render mutiple items', async () => {
-    class App {
+    class App extends Component {
       @reactive count = 0;
       handleClick() {
         this.count ++;
@@ -52,7 +52,7 @@ describe('Basic', () => {
   });
 
   it('$if works', async () => {
-    class App {
+    class App extends Component {
       @reactive count = 1;
       handleClick() {
         this.count++;
@@ -112,7 +112,7 @@ describe('Basic', () => {
   };
 
     let app!: App;
-    class App {
+    class App extends Component {
       @reactive list = generateTodo([1]);
       render() {
         return <ul>
@@ -168,7 +168,7 @@ describe('Basic', () => {
   });
 
   it('attr can be reactive', async () => {
-    class App {
+    class App extends Component {
       @reactive count = 0;
       render() {
         return (
@@ -198,10 +198,9 @@ describe('Basic', () => {
 
   it('props should be reactive', async () => {
 
-    class Hello {
-      @reactive props!: {
-        name: string,
-      }
+    class Hello extends Component<{
+      name: string,
+    }> {
       render() {
         return <div>Hello {this.props.name}</div>
       }
@@ -209,7 +208,7 @@ describe('Basic', () => {
     
     let app!: App;
 
-    class App {
+    class App extends Component {
       @reactive name = 'name';
       render() {
         return (
@@ -235,17 +234,17 @@ describe('Basic', () => {
 
 
   it('can reactive a component', async () => {
-    class ComponentOne {
+    class ComponentOne extends Component {
       render() {
         return <div>ONE</div>;
       }
     }
-    class ComponentTwo {
+    class ComponentTwo extends Component {
       render() {
         return <div>TWO</div>;
       }
     }
-    class App {
+    class App extends Component {
       @reactive isComponentOne = true;
       @computed get component() {
         return this.isComponentOne ? ComponentOne: ComponentTwo;
@@ -275,7 +274,7 @@ describe('Basic', () => {
 
   it('ref should get DOM', async () => {
     let refDom: HTMLElement;
-    class App {
+    class App extends Component {
       onRef(dom: HTMLElement) {
         refDom = dom;
       }

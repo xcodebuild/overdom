@@ -1,4 +1,4 @@
-import { render, h, reactive, computed } from "../src";
+import { render, h, reactive, computed, Component } from "../src";
 import { waitBatch } from './utils';
 import '../src/polyfill/createRange';
 
@@ -8,7 +8,7 @@ describe('LifeCycle', () => {
     });
     it('should trigger on Mount', async () => {
         let mounted = false;
-        class App {
+        class App extends Component {
             onMount() {
                 mounted = true;
             }
@@ -25,7 +25,7 @@ describe('LifeCycle', () => {
     it('onMount & onDestory', async () => {
         let oneMount = false;
         let twoMount = false;
-        class ComponentOne {
+        class ComponentOne extends Component {
             render() {
               return <div>ONE</div>;
             }
@@ -36,7 +36,7 @@ describe('LifeCycle', () => {
                 oneMount = false;
             }
           }
-          class ComponentTwo {
+          class ComponentTwo extends Component {
             render() {
               return <div>TWO</div>;
             }
@@ -47,7 +47,7 @@ describe('LifeCycle', () => {
                 twoMount = false;
             }
           }
-          class App {
+          class App extends Component {
             @reactive isComponentOne = true;
             @computed get component() {
               return this.isComponentOne ? ComponentOne: ComponentTwo;

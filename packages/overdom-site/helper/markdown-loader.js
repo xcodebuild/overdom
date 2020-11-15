@@ -42,9 +42,9 @@ marked.use({
 module.exports = function markdownLoader(source) {
     const content = marked(source);
     return `
-    import { h, reactive, computed, autorun, $if, $map } from 'overdom';
+    import { h, reactive, computed, autorun, $if, $map, Component } from 'overdom';
     import CodeBox from '${path.join(__dirname, './code-box')}'
-    export default class Demo {
+    export default class Demo extends Component {
         render() {
             return <div>${content}</div>;
         }

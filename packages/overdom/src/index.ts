@@ -1,4 +1,4 @@
-export { h, render } from './h';
+export { h, render, Component } from './h';
 
 export { reactive, computed, autorun } from './reactive';
 

@@ -1,6 +1,6 @@
 import { schedule } from './batcher';
 import { isDirective } from './directive';
-import { createAutorun, isRef, reactiveComponent, Ref, runInRefMode, wrapFnHideRefMode } from './reactive';
+import { createAutorun, createReactive, isRef, reactive, reactiveComponent, Ref, runInRefMode, wrapFnHideRefMode } from './reactive';
 import { Fragment } from './fragment';
 
 function buildComponent(
@@ -16,10 +16,17 @@ function buildComponent(
   return fragment!;
 }
 
-export interface Component {
-  render: () => Fragment,
-  onMount?: () => void,
-  onDestory?: () => void,
+export class Component<T = any> {
+  props!: T;
+  constructor(props?: T) {
+    // @ts-ignore
+    this.props = createReactive(props || {});
+  }
+  render() {
+    return null as unknown as Fragment;
+  }
+  onMount() {}
+  onDestory() {}
 }
 
 function setAttr(node: HTMLElement, key: string, value: any) {
