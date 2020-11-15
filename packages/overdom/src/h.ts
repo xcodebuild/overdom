@@ -1,6 +1,6 @@
 import { schedule } from './batcher';
 import { isDirective } from './directive';
-import { createAutorun, createReactive, isRef, reactive, reactiveComponent, Ref, runInRefMode, wrapFnHideRefMode } from './reactive';
+import { createAutorun, createReactive, isRef, reactiveComponent, Ref, runInRefMode, wrapFnHideRefMode } from './reactive';
 import { Fragment } from './fragment';
 
 function buildComponent(
@@ -17,10 +17,9 @@ function buildComponent(
 }
 
 export class Component<T = any> {
-  props!: T;
-  constructor(props?: T) {
-    // @ts-ignore
-    this.props = createReactive(props || {});
+  props: T;
+  constructor(props: T) {
+    this.props = createReactive(props);
   }
   render() {
     return null as unknown as Fragment;

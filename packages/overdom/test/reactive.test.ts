@@ -17,7 +17,7 @@ describe('Reactive', () => {
             }
         }
 
-        const model = createReactive(new Model());
+        const model = createReactive(new Model({}));
         // compute once
         runInHideRefMode(() => {
             expect(model.yesOrNo).toEqual('NO');
