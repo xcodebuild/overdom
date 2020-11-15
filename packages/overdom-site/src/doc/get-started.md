@@ -228,6 +228,51 @@ export default class App {
 }
 ```
 
+## LifeCycle
+
+- `onMount()` will be called after component's DOM is append to document
+- `onDestory()` will be called after component's DOM is removed from document
+
+```demo
+class ComponentOne {
+    render() {
+        return <div>ONE</div>;
+    }
+    onMount() {
+        console.log('mount one');
+    }
+    onDestory() {
+        console.log('one destoryed');
+    }
+}
+class ComponentTwo {
+    render() {
+        return <div>TWO</div>;
+    }
+    onMount() {
+        console.log('mount two');
+    }
+    onDestory() {
+        console.log('two destoryed');
+    }
+}
+export default class App {
+    @reactive isComponentOne = true;
+    @computed get component() {
+      return this.isComponentOne ? ComponentOne: ComponentTwo;
+    }
+    handleClick() {
+      this.isComponentOne = !this.isComponentOne;
+    }
+    render () {
+      const Comp = this.component;
+      return <button onClick={this.handleClick}>
+        <Comp />
+      </button>;
+    }
+}
+```
+
 ## PlayGround
 
 Play online with [CodeSandbox](https://codesandbox.io/s/naughty-hill-ugkgj?file=/src/index.tsx)
